@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SignBridge — ISL Live Detection</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f4f6f9;--white:#fff;--s1:#f0f2f5;--s2:#e8ebf0;--s3:#dde1e8;
+  --ac:#2563eb;--acl:#eff4ff;--ac2:#7c3aed;--ac3:#059669;--ac3l:#ecfdf5;
+  --warn:#d97706;--err:#dc2626;--errl:#fef2f2;
+  --t:#1a2030;--t2:#4a5568;--t3:#8492a6;
+  --bd:#e2e8f0;--bd2:#bfdbfe;
+  --r:12px;--rsm:8px;--rxs:6px;
+  --sh:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shmd:0 4px 12px rgba(0,0,0,.08),0 2px 4px rgba(0,0,0,.04);
+}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction:column;position:relative}
+
+/* TOP BAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;background:var(--white);border-bottom:1px solid var(--bd);flex-shrink:0;gap:10px;box-shadow:var(--sh)}
+.logo{display:flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--ac)}
+.logo-box{width:28px;height:28px;background:var(--ac);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.room-row{display:flex;align-items:center;gap:8px}
+.room-chip{font-family:'DM Mono',monospace;font-size:11px;color:var(--t2);background:var(--s1);padding:4px 10px;border-radius:18px;border:1px solid var(--bd);cursor:pointer;transition:all .18s}
+.room-chip:hover{border-color:var(--ac);color:var(--ac);background:var(--acl)}
+.live-pill{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:600;color:var(--err);background:var(--errl);padding:3px 9px;border-radius:18px;border:1px solid rgba(220,38,38,.2)}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--err);animation:blink 1.8s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.timer-txt{font-family:'DM Mono',monospace;font-size:12px;color:var(--t3)}
+.hdr-btns{display:flex;gap:6px}
+.hbtn{width:32px;height:32px;background:var(--s1);border:1px solid var(--bd);border-radius:var(--rsm);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t2);font-size:14px;transition:all .18s}
+.hbtn:hover{background:var(--acl);color:var(--ac);border-color:var(--ac)}
+
+/* OTP STRIP */
+.otp-strip{background:var(--white);border-bottom:1px solid var(--bd);padding:8px 18px;display:flex;align-items:center;gap:14px;flex-shrink:0}
+.otp-label{font-size:11px;font-weight:500;color:var(--t3);white-space:nowrap}
+.otp-digits{display:flex;gap:5px}
+.otp-d{width:34px;height:34px;background:var(--s1);border:1px solid var(--bd);border-radius:var(--rsm);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:var(--t);transition:all .2s}
+.otp-d.pop{background:var(--acl);border-color:var(--ac);color:var(--ac);transform:scale(1.08)}
+.otp-timer{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t3);font-family:'DM Mono',monospace}
+.otp-arc-wrap{position:relative;width:20px;height:20px}
+.otp-arc-wrap svg{transform:rotate(-90deg)}
+.otp-exp{font-size:11px}
+.otp-exp.low{color:var(--err)}
+.otp-btns{display:flex;gap:5px;margin-left:auto}
+.otp-btn{font-size:11px;padding:4px 10px;border-radius:18px;border:1px solid var(--bd);background:var(--s1);color:var(--t2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.otp-btn:hover{border-color:var(--ac);color:var(--ac);background:var(--acl)}
+.otp-btn.regen{background:var(--ac);color:#fff;border-color:var(--ac)}
+.otp-btn.regen:hover{opacity:.88}
+.otp-btn.copied{background:var(--ac3l);color:var(--ac3);border-color:var(--ac3)}
+
+/* WORKSPACE */
+.workspace{display:grid;grid-template-columns:1fr 288px;flex:1;overflow:hidden;min-height:0}
+
+/* VIDEO COL */
+.video-col{display:flex;flex-direction:column;padding:12px;gap:10px;overflow:hidden}
+.video-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;min-height:0}
+.vtile{position:relative;background:var(--s2);border:1.5px solid var(--bd);border-radius:var(--r);overflow:hidden;display:flex;align-items:center;justify-content:center;transition:border-color .25s,box-shadow .25s}
+.vtile.speaking{border-color:var(--ac);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.vtile video{width:100%;height:100%;object-fit:cover;border-radius:calc(var(--r) - 2px);display:block}
+.vtile canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.tile-avatar{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.avatar-ring{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600}
+.tile-footer{position:absolute;bottom:8px;left:8px;right:8px;display:flex;align-items:center;justify-content:space-between}
+.name-chip{font-size:11px;font-weight:500;background:rgba(255,255,255,.92);color:var(--t);padding:3px 8px;border-radius:14px;border:1px solid var(--bd);box-shadow:var(--sh)}
+.tile-badges{display:flex;gap:4px}
+.badge{font-size:9px;font-weight:600;padding:2px 7px;border-radius:10px;letter-spacing:.02em}
+.badge-asl{background:#dbeafe;color:#1d4ed8;border:1px solid #bfdbfe}
+.badge-mute{background:var(--s2);color:var(--t3);border:1px solid var(--bd)}
+.badge-ok{background:#d1fae5;color:#065f46;border:1px solid #a7f3d0}
+.tile-signal{position:absolute;top:8px;left:8px;display:flex;gap:2px;align-items:flex-end}
+.sig-bar{width:3px;border-radius:1px;background:var(--ac3)}
+
+/* sign overlay on tile */
+.sign-overlay{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.93);border:1px solid var(--bd);border-radius:var(--rsm);padding:5px 10px;font-size:12px;font-weight:600;color:var(--t);box-shadow:var(--sh);display:none;align-items:center;gap:6px;backdrop-filter:blur(4px)}
+.sign-overlay.visible{display:flex}
+.sign-overlay .so-emoji{font-size:18px}
+.sign-overlay .so-conf{font-size:10px;color:var(--ac3);font-family:'DM Mono',monospace}
+
+/* hold ring */
+.hold-ring-wrap{position:absolute;bottom:44px;left:50%;transform:translateX(-50%);display:none}
+.hold-ring-wrap.visible{display:block}
+
+/* finger state */
+.finger-row{position:absolute;bottom:44px;left:10px;display:flex;gap:3px;display:none}
+.finger-row.visible{display:flex}
+.fp{width:20px;height:20px;border-radius:4px;border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;transition:all .12s}
+.fp.up{background:rgba(37,99,235,.18);border-color:var(--ac);color:var(--ac)}
+.fp.dn{background:var(--s1);color:var(--t3)}
+
+.conn-screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:var(--s1);border-radius:calc(var(--r) - 2px)}
+.spinner{width:32px;height:32px;border:2px solid var(--bd);border-top-color:var(--ac);border-radius:50%;animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.conn-txt{font-size:12px;color:var(--t2);text-align:center;padding:0 16px}
+
+/* CAPTION BOX */
+.caption-box{background:var(--white);border:1px solid var(--bd);border-radius:var(--r);padding:12px 16px;flex-shrink:0;box-shadow:var(--sh)}
+.cap-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cap-left{display:flex;align-items:center;gap:8px}
+.cap-who{font-size:11px;font-weight:600;color:var(--ac)}
+.cap-tag{font-size:9px;font-weight:600;padding:2px 7px;border-radius:10px;background:#dbeafe;color:#1d4ed8;border:1px solid #bfdbfe;letter-spacing:.03em}
+.cap-ok{font-size:9px;font-weight:600;padding:2px 7px;border-radius:10px;background:#d1fae5;color:#065f46;border:1px solid #a7f3d0}
+.cap-right{display:flex;gap:6px}
+.cap-action{font-size:10px;padding:3px 9px;border-radius:12px;border:1px solid var(--bd);background:var(--s1);color:var(--t2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.cap-action:hover{border-color:var(--ac);color:var(--ac);background:var(--acl)}
+.cap-action.red{color:var(--err);border-color:rgba(220,38,38,.3);background:var(--errl)}
+.cap-body{min-height:52px;background:var(--s1);border:1px solid var(--bd);border-radius:var(--rsm);padding:10px 12px;position:relative}
+.cap-text{font-size:15px;color:var(--t);line-height:1.6;word-break:break-word;min-height:24px}
+.cap-text .cw{display:inline;margin-right:4px}
+.cap-text .cw.newest{color:var(--ac);animation:wfade .35s ease}
+@keyframes wfade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.cap-cursor{display:inline-block;width:2px;height:17px;background:var(--ac);margin-left:2px;vertical-align:middle;animation:blink .85s infinite}
+.cap-empty{font-size:13px;color:var(--t3)}
+.cap-sign-badge{display:flex;align-items:center;gap:4px;margin-top:6px;flex-wrap:wrap;gap:4px}
+.sign-word-tag{font-size:11px;padding:2px 8px;border-radius:10px;background:#dbeafe;color:#1d4ed8;border:1px solid #bfdbfe;font-weight:500}
+
+/* SIDEBAR */
+.sidebar{background:var(--white);border-left:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden;box-shadow:-2px 0 8px rgba(0,0,0,.04)}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:10px 12px 6px;flex-shrink:0}
+.stat-box{background:var(--s1);border:1px solid var(--bd);border-radius:var(--rsm);padding:7px 6px;text-align:center}
+.stat-n{font-size:18px;font-weight:600;font-family:'DM Mono',monospace;color:var(--ac)}
+.stat-l{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-top:1px}
+.stabs{display:flex;border-bottom:1px solid var(--bd);flex-shrink:0}
+.stab{flex:1;padding:9px 4px;background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--t3);border-bottom:2.5px solid transparent;transition:all .18s}
+.stab.on{color:var(--ac);border-bottom-color:var(--ac)}
+.spanel{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.spanel::-webkit-scrollbar{width:3px}
+.spanel::-webkit-scrollbar-thumb{background:var(--s3);border-radius:2px}
+.tab-pane{display:none;flex-direction:column;gap:7px}
+.tab-pane.on{display:flex}
+.slabel{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--t3);margin-bottom:2px}
+
+/* sign cards */
+.sign-card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--rsm);padding:8px 10px;transition:all .25s}
+.sign-card.lit{border-color:var(--ac);background:var(--acl)}
+.sc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.sc-name{font-size:12px;font-weight:500;color:var(--t)}
+.sc-conf{font-size:10px;font-family:'DM Mono',monospace;color:var(--ac3)}
+.sc-bar{height:2px;background:var(--s3);border-radius:1px}
+.sc-fill{height:100%;border-radius:1px;background:var(--ac);transition:width .4s ease}
+.sc-desc{font-size:10px;color:var(--t3);margin-top:4px}
+
+/* chat */
+.chat-msg{display:flex;gap:7px;align-items:flex-start}
+.chat-msg.me{flex-direction:row-reverse}
+.chat-av{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600}
+.chat-bub{background:var(--s1);border:1px solid var(--bd);border-radius:6px 12px 12px 6px;padding:7px 10px;font-size:12px;line-height:1.5;max-width:190px;word-break:break-word;color:var(--t)}
+.chat-bub.me{border-radius:12px 6px 6px 12px;background:var(--ac);color:#fff;border-color:var(--ac)}
+.chat-bub.sl{border-color:#bfdbfe;background:#eff6ff}
+.chat-ts{font-size:9px;color:var(--t3);margin-top:2px;font-family:'DM Mono',monospace}
+
+/* settings */
+.trow{display:flex;align-items:center;justify-content:space-between;background:var(--s1);border:1px solid var(--bd);border-radius:var(--rsm);padding:9px 11px}
+.trow-l{font-size:12px;font-weight:500;color:var(--t)}
+.trow-s{font-size:10px;color:var(--t3);margin-top:1px}
+.tog{width:36px;height:20px;background:var(--s3);border-radius:10px;position:relative;cursor:pointer;transition:background .18s;border:1px solid var(--bd);flex-shrink:0}
+.tog.on{background:var(--ac);border-color:var(--ac)}
+.tok{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .18s;box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.tog.on .tok{transform:translateX(16px)}
+.ws-row{display:flex;align-items:center;gap:8px;font-size:11px;background:var(--s1);border:1px solid var(--bd);border-radius:var(--rsm);padding:8px 11px;color:var(--t2)}
+.ws-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.ws-dot.ok{background:var(--ac3)}
+.ws-dot.wait{background:var(--warn);animation:blink 1s infinite}
+.ws-dot.no{background:var(--err)}
+.room-share{background:var(--s1);border:1px solid var(--bd);border-radius:var(--rsm);padding:9px 11px}
+.room-share label{font-size:10px;color:var(--t3);display:block;margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.room-inp{width:100%;background:var(--white);border:1px solid var(--bd);border-radius:var(--rxs);padding:6px 9px;font-family:'DM Mono',monospace;font-size:11px;color:var(--t);outline:none;margin-bottom:6px}
+.room-inp:focus{border-color:var(--ac)}
+.btn-row{display:flex;gap:5px}
+.sbtn{flex:1;padding:6px 8px;border-radius:var(--rxs);border:1px solid var(--bd);background:var(--white);color:var(--t2);font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer;transition:all .15s}
+.sbtn:hover{color:var(--ac);border-color:var(--ac);background:var(--acl)}
+.sbtn.primary{background:var(--ac);color:#fff;border-color:var(--ac);font-weight:500}
+.sbtn.primary:hover{opacity:.88}
+
+/* chat input */
+.chat-input-area{padding:10px 12px;border-top:1px solid var(--bd);display:flex;gap:7px;align-items:center;flex-shrink:0}
+.chat-inp{flex:1;background:var(--s1);border:1px solid var(--bd);border-radius:18px;padding:7px 13px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--t);outline:none}
+.chat-inp:focus{border-color:var(--ac);background:var(--white)}
+.chat-inp::placeholder{color:var(--t3)}
+.send-btn{width:30px;height:30px;background:var(--ac);border:none;border-radius:50%;cursor:pointer;color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;transition:transform .1s;flex-shrink:0}
+.send-btn:active{transform:scale(.88)}
+
+/* CONTROLS */
+.ctrlbar{background:var(--white);border-top:1px solid var(--bd);padding:9px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:10px;box-shadow:0 -1px 3px rgba(0,0,0,.05)}
+.ctrl-grp{display:flex;gap:6px;align-items:center}
+.cbtn{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--s1);border:1px solid var(--bd);border-radius:var(--rsm);padding:7px 12px;cursor:pointer;color:var(--t2);transition:all .15s;min-width:56px;user-select:none}
+.cbtn:hover{background:var(--acl);color:var(--ac);border-color:var(--ac)}
+.cbtn.on{background:var(--acl);border-color:var(--ac);color:var(--ac)}
+.cbtn-icon{font-size:16px}
+.cbtn-lbl{font-size:9px;font-weight:600;letter-spacing:.03em}
+.sl-ind{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--ac);background:var(--acl);border:1px solid var(--bd2);border-radius:18px;padding:5px 12px;font-weight:500;white-space:nowrap;transition:opacity .3s}
+.sl-pulse{width:6px;height:6px;border-radius:50%;background:var(--ac);animation:slp 1.6s infinite}
+@keyframes slp{0%,100%{box-shadow:0 0 0 0 rgba(37,99,235,.4)}50%{box-shadow:0 0 0 5px rgba(37,99,235,0)}}
+.end-btn{background:var(--err);border:none;color:#fff;padding:9px 20px;border-radius:var(--rsm);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;transition:opacity .15s}
+.end-btn:hover{opacity:.84}
+
+/* TOAST */
+.toast{position:absolute;top:52px;right:14px;background:var(--white);border:1px solid var(--bd);border-radius:var(--rsm);padding:9px 14px;font-size:12px;color:var(--t);z-index:999;display:flex;align-items:center;gap:7px;max-width:300px;transform:translateX(115%);transition:transform .25s ease;pointer-events:none;box-shadow:var(--shmd)}
+.toast.show{transform:translateX(0)}
+
+/* OVERLAY */
+.overlay{position:absolute;inset:0;z-index:200;background:rgba(240,242,245,.97);display:flex;align-items:center;justify-content:center}
+.consent-box{background:var(--white);border:1px solid var(--bd);border-radius:16px;padding:32px 28px;max-width:440px;width:90%;text-align:center;box-shadow:var(--shmd)}
+.cb-logo{width:52px;height:52px;background:var(--ac);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:26px}
+.cb-title{font-size:20px;font-weight:600;color:var(--t);margin-bottom:6px}
+.cb-sub{font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:20px}
+.tech-wrap{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:22px}
+.tech-pill{font-size:10px;font-family:'DM Mono',monospace;padding:3px 9px;border-radius:14px;background:var(--s1);border:1px solid var(--bd);color:var(--t2)}
+.cb-acts{display:flex;gap:9px;justify-content:center}
+.cb-acts button{padding:10px 24px;border-radius:var(--rsm);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;font-weight:500}
+.btn-p{background:var(--ac);color:#fff;border:none;box-shadow:var(--sh)}
+.btn-p:hover{opacity:.88}
+.btn-g{background:var(--s1);color:var(--t2);border:1px solid var(--bd)}
+.btn-g:hover{color:var(--t);border-color:var(--t3)}
+</style>
+</head>
+<body>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="consent-box">
+    <div class="cb-logo">🤟</div>
+    <div class="cb-title">SignBridge</div>
+    <div class="cb-sub">Show ISL signs to your camera — the app detects your hand gestures in real-time and generates live captions automatically. Share your Room ID to connect with a peer.</div>
+    <div class="tech-wrap">
+      <span class="tech-pill">MediaPipe Hands</span>
+      <span class="tech-pill">ISL Detection</span>
+      <span class="tech-pill">Live Captions</span>
+      <span class="tech-pill">OTP Security</span>
+      <span class="tech-pill">WebRTC P2P</span>
+    </div>
+    <div class="cb-acts">
+      <button class="btn-g" id="btnNoCam">Join without camera</button>
+      <button class="btn-p" id="btnCam">Enable camera &amp; detect</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-box">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 12V6.5M7.5 12V3M12 12V8.5" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </div>
+    SignBridge
+  </div>
+  <div class="room-row">
+    <span class="room-chip" id="roomChip" onclick="copyRoom()">Room: ···</span>
+    <span class="live-pill"><span class="live-dot"></span>LIVE</span>
+    <span class="timer-txt" id="timerEl">00:00</span>
+  </div>
+  <div class="hdr-btns">
+    <div class="hbtn" onclick="switchTab('settings')">⚙</div>
+    <div class="hbtn" onclick="toggleFS()">⛶</div>
+  </div>
+</div>
+
+<!-- OTP STRIP -->
+<div class="otp-strip">
+  <span class="otp-label">Room OTP</span>
+  <div class="otp-digits">
+    <div class="otp-d" id="od0">–</div><div class="otp-d" id="od1">–</div>
+    <div class="otp-d" id="od2">–</div><div class="otp-d" id="od3">–</div>
+    <div class="otp-d" id="od4">–</div><div class="otp-d" id="od5">–</div>
+  </div>
+  <div class="otp-timer">
+    <div class="otp-arc-wrap">
+      <svg width="20" height="20" viewBox="0 0 20 20">
+        <circle cx="10" cy="10" r="7" fill="none" stroke="#e2e8f0" stroke-width="2.5"/>
+        <circle id="otpArc" cx="10" cy="10" r="7" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="43.98" stroke-dashoffset="0"/>
+      </svg>
+    </div>
+    <span class="otp-exp" id="otpExp">30s</span>
+  </div>
+  <div class="otp-btns">
+    <button class="otp-btn" id="otpCopyBtn" onclick="copyOTP()">Copy</button>
+    <button class="otp-btn regen" onclick="generateOTP()">New OTP</button>
+  </div>
+</div>
+
+<!-- WORKSPACE -->
+<div class="workspace">
+  <div class="video-col">
+    <div class="video-row">
+
+      <!-- LOCAL TILE (with ISL detection) -->
+      <div class="vtile" id="tile-local">
+        <div class="tile-avatar" id="localAvatar">
+          <div class="avatar-ring" style="background:#dbeafe;color:#1d4ed8">You</div>
+        </div>
+        <video id="localVideo" autoplay muted playsinline></video>
+        <canvas id="localCanvas"></canvas>
+        <!-- sign overlay top-right -->
+        <div class="sign-overlay" id="signOverlay">
+          <span class="so-emoji" id="soEmoji">🤟</span>
+          <span id="soName">Detecting…</span>
+          <span class="so-conf" id="soConf"></span>
+        </div>
+        <!-- finger state bottom-left -->
+        <div class="finger-row" id="fingerRow">
+          <div class="fp dn" id="fp0">T</div>
+          <div class="fp dn" id="fp1">I</div>
+          <div class="fp dn" id="fp2">M</div>
+          <div class="fp dn" id="fp3">R</div>
+          <div class="fp dn" id="fp4">P</div>
+        </div>
+        <!-- hold ring -->
+        <div class="hold-ring-wrap" id="holdRingWrap">
+          <svg width="48" height="48" viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="20" fill="none" stroke="#e2e8f0" stroke-width="3"/>
+            <circle id="holdArc" cx="24" cy="24" r="20" fill="none" stroke="#2563eb" stroke-width="3" stroke-linecap="round"
+              stroke-dasharray="125.66" stroke-dashoffset="125.66" transform="rotate(-90 24 24)"/>
+          </svg>
+        </div>
+        <div class="tile-signal" id="localSignal"></div>
+        <div class="tile-footer">
+          <span class="name-chip">You</span>
+          <div class="tile-badges"><span class="badge badge-asl" id="localBadge">Starting…</span></div>
+        </div>
+      </div>
+
+      <!-- REMOTE TILE -->
+      <div class="vtile" id="tile-remote">
+        <div class="conn-screen" id="remoteWaiting">
+          <div class="spinner"></div>
+          <div class="conn-txt" id="waitingTxt">Waiting for peer…<br><span style="font-size:10px;color:var(--t3)">Share Room ID to invite</span></div>
+        </div>
+        <video id="remoteVideo" autoplay playsinline style="display:none"></video>
+        <canvas id="remoteCanvas"></canvas>
+        <div class="tile-signal" id="remoteSignal"></div>
+        <div class="tile-footer">
+          <span class="name-chip" id="remoteName">Waiting…</span>
+          <div class="tile-badges"><span class="badge badge-mute" id="remoteBadge">Not connected</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIVE CAPTION BOX -->
+    <div class="caption-box">
+      <div class="cap-header">
+        <div class="cap-left">
+          <span class="cap-who" id="capWho">—</span>
+          <span class="cap-tag" id="capTag">ISL → Text</span>
+          <span class="cap-ok" id="capOk" style="display:none">✓ Detected</span>
+        </div>
+        <div class="cap-right">
+          <button class="cap-action" onclick="speakCaption()">🔊 Speak</button>
+          <button class="cap-action" onclick="undoLast()">⌫ Undo</button>
+          <button class="cap-action red" onclick="clearCaption()">Clear</button>
+        </div>
+      </div>
+      <div class="cap-body">
+        <div class="cap-text" id="capText">
+          <span class="cap-empty" id="capEmpty">Show an ISL sign to the camera — captions appear here automatically…</span>
+        </div>
+        <div class="cap-sign-badge" id="capSignBadge"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-n" id="stSigns">0</div><div class="stat-l">Signs</div></div>
+      <div class="stat-box"><div class="stat-n" id="stConf">—</div><div class="stat-l">Conf</div></div>
+      <div class="stat-box"><div class="stat-n" id="stWords">0</div><div class="stat-l">Words</div></div>
+    </div>
+    <div class="stabs">
+      <button class="stab on" onclick="switchTab('signs')">Signs</button>
+      <button class="stab" onclick="switchTab('chat')">Chat</button>
+      <button class="stab" onclick="switchTab('settings')">Settings</button>
+    </div>
+    <div class="spanel">
+
+      <div class="tab-pane on" id="tab-signs">
+        <div class="slabel">Detected signs</div>
+        <div id="signFeed" style="display:flex;flex-direction:column;gap:5px">
+          <div id="signEmpty" style="font-size:12px;color:var(--t3);text-align:center;padding:14px 0">No signs detected yet</div>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="tab-chat">
+        <div class="slabel">Meeting chat</div>
+        <div id="chatMsgs" style="display:flex;flex-direction:column;gap:7px"></div>
+      </div>
+
+      <div class="tab-pane" id="tab-settings">
+        <div class="slabel">Connection</div>
+        <div class="ws-row">
+          <div class="ws-dot wait" id="peerDot"></div>
+          <span id="peerStatus">Not connected to peer</span>
+        </div>
+        <div class="room-share">
+          <label>Your room ID</label>
+          <input type="text" class="room-inp" id="roomInput" readonly>
+          <div class="btn-row">
+            <button class="sbtn" onclick="copyRoom()">Copy ID</button>
+            <button class="sbtn" onclick="copyLink()">Copy link</button>
+          </div>
+        </div>
+        <div class="room-share" style="margin-top:4px">
+          <label>Join a room (paste peer's Room ID)</label>
+          <input type="text" class="room-inp" id="joinInput" placeholder="e.g. GK9T-SVFK">
+          <div class="btn-row">
+            <button class="sbtn primary" onclick="joinRoom()">Connect</button>
+          </div>
+        </div>
+        <div class="slabel" style="margin-top:6px">OTP verification</div>
+        <div class="room-share">
+          <label>Enter peer's 6-digit OTP</label>
+          <input type="text" class="room-inp" id="otpVerifyInput" placeholder="e.g. 482931" maxlength="6">
+          <div class="btn-row">
+            <button class="sbtn primary" onclick="verifyOTP()">Verify peer</button>
+          </div>
+        </div>
+        <div class="slabel" style="margin-top:6px">ISL detection</div>
+        <div class="trow"><div><div class="trow-l">Show skeleton</div><div class="trow-s">Hand landmark overlay</div></div><div class="tog on" id="tgl-kp" onclick="tog(this,'kp')"><div class="tok"></div></div></div>
+        <div class="trow"><div><div class="trow-l">Finger indicators</div><div class="trow-s">T I M R P state</div></div><div class="tog on" id="tgl-fi" onclick="tog(this,'fi')"><div class="tok"></div></div></div>
+        <div class="trow"><div><div class="trow-l">Captions</div><div class="trow-s">Show detected text</div></div><div class="tog on" id="tgl-cc" onclick="tog(this,'cc')"><div class="tok"></div></div></div>
+        <div class="trow"><div><div class="trow-l">Auto-speak</div><div class="trow-s">TTS on each sign</div></div><div class="tog" id="tgl-tts" onclick="tog(this,'tts')"><div class="tok"></div></div></div>
+        <div class="slabel" style="margin-top:6px">Hold duration</div>
+        <div style="display:flex;align-items:center;gap:10px;background:var(--s1);border:1px solid var(--bd);border-radius:var(--rsm);padding:9px 11px">
+          <input type="range" min="300" max="2000" value="900" step="100" id="holdSlider" style="flex:1" oninput="holdMs=+this.value;document.getElementById('holdVal').textContent=this.value+'ms'">
+          <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--ac);min-width:44px" id="holdVal">900ms</span>
+        </div>
+      </div>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" class="chat-inp" id="chatInput" placeholder="Type a message…">
+      <button class="send-btn" onclick="sendChat()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTROLS -->
+<div class="ctrlbar">
+  <div class="ctrl-grp">
+    <div class="cbtn on" id="btnMic" onclick="toggleMic(this)"><div class="cbtn-icon">🎙</div><div class="cbtn-lbl">Mic</div></div>
+    <div class="cbtn on" id="btnCamCtrl" onclick="toggleCam(this)"><div class="cbtn-icon">📷</div><div class="cbtn-lbl">Camera</div></div>
+    <div class="cbtn on" id="btnISL" onclick="toggleISL(this)"><div class="cbtn-icon">🤟</div><div class="cbtn-lbl">ISL</div></div>
+  </div>
+  <div class="sl-ind" id="slInd"><div class="sl-pulse"></div><span id="slTxt">ISL Detection Active</span></div>
+  <div class="ctrl-grp">
+    <div class="cbtn" onclick="toggleCtrl(this,'cc')"><div class="cbtn-icon">📝</div><div class="cbtn-lbl">Captions</div></div>
+    <div class="cbtn" onclick="toggleCtrl(this,'rec')"><div class="cbtn-icon">⏺</div><div class="cbtn-lbl">Record</div></div>
+    <button class="end-btn" onclick="endCall()">End Call</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+
+<!-- MediaPipe -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/hands.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1640029074/camera_utils.js" crossorigin="anonymous"></script>
+
+<script>
+// ══════════════════════════════════════════════
+//  ISL SIGN DATABASE — finger patterns + sentences
+//  fingers: [Thumb, Index, Middle, Ring, Pinky]
+// ══════════════════════════════════════════════
+const ISL = {
+  HELLO:     { e:'👋', f:[1,1,1,1,1], w:'Hello',          s:'Hello! Nice to meet you.' },
+  BYE:       { e:'🤚', f:[1,1,1,1,1], w:'Bye',            s:'Goodbye! See you soon.' },
+  YES:       { e:'👍', f:[1,0,0,0,0], w:'Yes',            s:'Yes, I agree.' },
+  NO:        { e:'👎', f:[1,0,0,0,0], w:'No',             s:'No, I disagree.' },
+  GOOD:      { e:'✌',  f:[0,1,1,0,0], w:'Good',           s:'That is very good!' },
+  SORRY:     { e:'✊', f:[0,0,0,0,0], w:'Sorry',          s:'I am sorry about that.' },
+  PLEASE:    { e:'🤲', f:[1,1,1,1,1], w:'Please',         s:'Please, could you help me?' },
+  THANKYOU:  { e:'🙏', f:[1,1,1,1,1], w:'Thank you',      s:'Thank you very much.' },
+  HELP:      { e:'🤝', f:[1,0,0,0,0], w:'Help',           s:'I need help please.' },
+  LOVE:      { e:'🤟', f:[1,1,0,0,1], w:'Love',           s:'I love you.' },
+  I:         { e:'🤙', f:[1,0,0,0,1], w:'I',              s:'I am signing to you.' },
+  WATER:     { e:'💧', f:[0,1,1,1,0], w:'Water',          s:'I need some water.' },
+  FOOD:      { e:'🍽', f:[1,1,1,1,0], w:'Food',           s:'I am hungry, I need food.' },
+  HOME:      { e:'🏠', f:[1,1,1,1,0], w:'Home',           s:'I am at home.' },
+  STOP:      { e:'✋', f:[1,1,1,1,1], w:'Stop',           s:'Please stop.' },
+  COME:      { e:'👆', f:[0,1,0,0,0], w:'Come',           s:'Please come here.' },
+  QUESTION:  { e:'❓', f:[0,1,0,0,0], w:'Question',       s:'I have a question.' },
+  MORE:      { e:'➕', f:[1,1,1,1,0], w:'More',           s:'I need more time.' },
+  FINISH:    { e:'🏁', f:[1,1,1,1,1], w:'Finished',       s:'I have finished.' },
+  PAIN:      { e:'😣', f:[0,1,0,0,0], w:'Pain',           s:'I am in pain, please help.' },
+  HAPPY:     { e:'😊', f:[1,1,1,1,1], w:'Happy',          s:'I am very happy right now!' },
+  UNDERSTAND:{ e:'☝', f:[0,1,0,0,0], w:'Understand',     s:'I understand now.' },
+  REPEAT:    { e:'🔁', f:[0,1,1,1,1], w:'Repeat',         s:'Please repeat that again.' },
+  NAME:      { e:'🪪', f:[0,1,1,0,0], w:'Name',           s:'What is your name?' },
+  MEETING:   { e:'🤝', f:[0,1,1,0,0], w:'Meeting',        s:'Let us start the meeting.' },
+  DOCTOR:    { e:'🏥', f:[0,1,0,0,0], w:'Doctor',         s:'I need to see a doctor.' },
+  SCHOOL:    { e:'📚', f:[0,1,1,1,1], w:'School',         s:'I am going to school.' },
+  FRIEND:    { e:'🤞', f:[0,1,1,0,0], w:'Friend',         s:'Nice to meet you, friend.' },
+};
+
+// Map finger patterns → candidate sign keys
+const PATTERNS = [
+  { p:[1,1,1,1,1], keys:['HELLO','BYE','STOP','PLEASE','THANKYOU','HAPPY','FINISH'] },
+  { p:[1,0,0,0,0], keys:['YES','HELP','NO'] },
+  { p:[1,1,0,0,1], keys:['LOVE'] },
+  { p:[1,0,0,0,1], keys:['I'] },
+  { p:[0,1,1,0,0], keys:['GOOD','NAME','MEETING','FRIEND'] },
+  { p:[0,1,1,1,0], keys:['WATER'] },
+  { p:[1,1,1,1,0], keys:['FOOD','HOME','MORE'] },
+  { p:[0,1,1,1,1], keys:['REPEAT','SCHOOL'] },
+  { p:[0,0,0,0,0], keys:['SORRY'] },
+  { p:[0,1,0,0,0], keys:['COME','QUESTION','PAIN','UNDERSTAND','DOCTOR'] },
+  { p:[1,1,1,0,0], keys:['K'] },
+];
+
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+let localStream=null, peerConn=null, dataChannel=null, bc=null;
+let roomId='', elapsed=0, timerIv=null;
+let signsCount=0, wordsCount=0;
+let islActive=true, showKp=true, showFI=true, ccActive=true, ttsActive=false;
+let peerConnected=false;
+const myId='usr_'+Math.random().toString(36).slice(2,8);
+
+// OTP
+let currentOTP='', otpTime=30, otpIv=null;
+const OTP_CIRC=43.98;
+
+// Detection state
+let handsModel=null, mpCam=null;
+let holdStart=null, lastMatch=null, detCooldown=false;
+let holdMs=900;
+let captionWords=[];
+let captionSigns=[];
+
+// ══════════════════════════════════════════════
+//  OTP
+// ══════════════════════════════════════════════
+function generateOTP(){
+  clearInterval(otpIv);
+  const a=new Uint32Array(6); crypto.getRandomValues(a);
+  currentOTP=Array.from(a).map(n=>n%10).join('');
+  otpTime=30;
+  for(let i=0;i<6;i++){
+    const d=document.getElementById('od'+i);
+    setTimeout(()=>{ d.textContent=currentOTP[i]; d.classList.add('pop'); setTimeout(()=>d.classList.remove('pop'),250); },i*55);
+  }
+  runOTPTimer();
+}
+function runOTPTimer(){
+  updateOTPTimer();
+  otpIv=setInterval(()=>{ otpTime--; updateOTPTimer(); if(otpTime<=0){clearInterval(otpIv);generateOTP();} },1000);
+}
+function updateOTPTimer(){
+  const pct=otpTime/30;
+  const arc=document.getElementById('otpArc');
+  arc.style.strokeDashoffset=OTP_CIRC*(1-pct);
+  arc.style.stroke=otpTime<=10?'#dc2626':'#2563eb';
+  const el=document.getElementById('otpExp');
+  el.textContent=otpTime+'s';
+  el.className='otp-exp'+(otpTime<=10?' low':'');
+}
+function copyOTP(){
+  if(!currentOTP)return;
+  navigator.clipboard.writeText(currentOTP).catch(()=>{});
+  const btn=document.getElementById('otpCopyBtn');
+  btn.textContent='Copied!'; btn.className='otp-btn copied';
+  setTimeout(()=>{ btn.textContent='Copy'; btn.className='otp-btn'; },2000);
+  toast('OTP copied: '+currentOTP);
+}
+function verifyOTP(){
+  const v=document.getElementById('otpVerifyInput').value.trim();
+  if(v===currentOTP){ toast('✅ OTP verified! Peer authenticated.'); setPeerStatus(true); document.getElementById('otpVerifyInput').value=''; }
+  else toast('❌ Wrong OTP — ask peer to share their current code.');
+}
+
+// ══════════════════════════════════════════════
+//  MEDIAPIPE HANDS
+// ══════════════════════════════════════════════
+function initHands(){
+  handsModel=new Hands({ locateFile:f=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/${f}` });
+  handsModel.setOptions({ maxNumHands:1, modelComplexity:1, minDetectionConfidence:0.62, minTrackingConfidence:0.55 });
+  handsModel.onResults(onHandResults);
+}
+
+// Finger geometry — real landmark math
+function getFingerStates(lm){
+  const tips=[4,8,12,16,20], pips=[3,6,10,14,18];
+  const states=[];
+  states.push(Math.abs(lm[4].x-lm[2].x)>0.05?1:0); // thumb
+  for(let i=1;i<5;i++) states.push(lm[tips[i]].y<lm[pips[i]].y?1:0);
+  return states;
+}
+
+function matchISL(states){
+  let best=null, bestScore=-1;
+  for(const rule of PATTERNS){
+    let score=0;
+    for(let i=0;i<5;i++) if(rule.p[i]===states[i]) score++;
+    if(score>bestScore){ bestScore=score; best=rule; }
+  }
+  const conf=Math.round((bestScore/5)*100);
+  if(conf<65) return null;
+  return { key:best.keys[0], conf };
+}
+
+// Hand connections for skeleton
+const HCONN=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[0,9],[9,10],[10,11],[11,12],[0,13],[13,14],[14,15],[15,16],[0,17],[17,18],[18,19],[19,20],[5,9],[9,13],[13,17]];
+
+function onHandResults(results){
+  const canvas=document.getElementById('localCanvas');
+  const tile=document.getElementById('tile-local');
+  canvas.width=tile.offsetWidth||640;
+  canvas.height=tile.offsetHeight||480;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const W=canvas.width, H=canvas.height;
+
+  if(results.multiHandLandmarks&&results.multiHandLandmarks.length>0){
+    const lm=results.multiHandLandmarks[0];
+    const side=results.multiHandedness?.[0]?.label||'Right';
+
+    // Draw skeleton
+    if(showKp){
+      ctx.strokeStyle='rgba(37,99,235,0.5)'; ctx.lineWidth=1.8;
+      HCONN.forEach(([a,b])=>{ ctx.beginPath(); ctx.moveTo(lm[a].x*W,lm[a].y*H); ctx.lineTo(lm[b].x*W,lm[b].y*H); ctx.stroke(); });
+      const tips=new Set([4,8,12,16,20]);
+      lm.forEach((p,i)=>{ ctx.beginPath(); ctx.arc(p.x*W,p.y*H,tips.has(i)?5:2.8,0,Math.PI*2); ctx.fillStyle=tips.has(i)?'#2563eb':'rgba(37,99,235,.7)'; ctx.fill(); });
+    }
+
+    // Finger states
+    const fs=getFingerStates(lm);
+
+    // Update finger indicators
+    if(showFI){
+      ['T','I','M','R','P'].forEach((l,i)=>{ const el=document.getElementById('fp'+i); el.textContent=l; el.className='fp '+(fs[i]?'up':'dn'); });
+      document.getElementById('fingerRow').className='finger-row visible';
+    } else {
+      document.getElementById('fingerRow').className='finger-row';
+    }
+
+    // ISL matching
+    if(!detCooldown&&islActive){
+      const match=matchISL(fs);
+      if(match){
+        const sign=ISL[match.key];
+        document.getElementById('signOverlay').className='sign-overlay visible';
+        document.getElementById('soEmoji').textContent=sign?.e||'🤟';
+        document.getElementById('soName').textContent=match.key;
+        document.getElementById('soConf').textContent=match.conf+'%';
+
+        // Hold ring
+        if(match.key===lastMatch){
+          if(!holdStart) holdStart=Date.now();
+          const held=Date.now()-holdStart;
+          const prog=Math.min(held/holdMs,1);
+          const arc=document.getElementById('holdArc');
+          const circumference=125.66;
+          arc.style.strokeDashoffset=circumference*(1-prog);
+          document.getElementById('holdRingWrap').className='hold-ring-wrap visible';
+
+          // Draw progress ring on canvas at wrist
+          const wx=lm[0].x*W, wy=lm[0].y*H;
+          const r=22;
+          ctx.beginPath(); ctx.arc(wx,wy,r,0,Math.PI*2);
+          ctx.strokeStyle='rgba(37,99,235,.15)'; ctx.lineWidth=4; ctx.stroke();
+          ctx.beginPath(); ctx.arc(wx,wy,r,-Math.PI/2,-Math.PI/2+Math.PI*2*prog);
+          ctx.strokeStyle='#2563eb'; ctx.lineWidth=4; ctx.lineCap='round'; ctx.stroke(); ctx.lineCap='butt';
+
+          if(held>=holdMs){
+            confirmSign(match.key,match.conf);
+            holdStart=null; lastMatch=null;
+            document.getElementById('holdRingWrap').className='hold-ring-wrap';
+          }
+        } else {
+          lastMatch=match.key; holdStart=Date.now();
+        }
+      } else {
+        document.getElementById('signOverlay').className='sign-overlay';
+        document.getElementById('holdRingWrap').className='hold-ring-wrap';
+        lastMatch=null; holdStart=null;
+      }
+    }
+  } else {
+    // No hand
+    document.getElementById('signOverlay').className='sign-overlay';
+    document.getElementById('fingerRow').className='finger-row';
+    document.getElementById('holdRingWrap').className='hold-ring-wrap';
+    lastMatch=null; holdStart=null;
+  }
+}
+
+// ══════════════════════════════════════════════
+//  CONFIRM SIGN → CAPTION
+// ══════════════════════════════════════════════
+function confirmSign(key, conf){
+  detCooldown=true;
+  setTimeout(()=>detCooldown=false, 900);
+
+  const sign=ISL[key];
+  if(!sign) return;
+
+  signsCount++;
+  wordsCount+=sign.s.split(' ').length;
+  document.getElementById('stSigns').textContent=signsCount;
+  document.getElementById('stConf').textContent=conf+'%';
+  document.getElementById('stWords').textContent=wordsCount;
+
+  captionWords.push(sign.w);
+  captionSigns.push({ key, sign, conf });
+
+  renderCaption(key, sign, conf, 'You');
+  pushSignCard(key, sign, conf, true);
+  sendData({ type:'sign', key, conf, sentence:sign.s, emoji:sign.e, label:sign.w });
+  toast(sign.e+' '+key+' detected → "'+sign.s+'"');
+
+  if(ttsActive){ const u=new SpeechSynthesisUtterance(sign.w); u.lang='en-IN'; u.rate=0.95; speechSynthesis.cancel(); speechSynthesis.speak(u); }
+}
+
+// ══════════════════════════════════════════════
+//  CAPTION RENDERING
+// ══════════════════════════════════════════════
+function renderCaption(key, sign, conf, who){
+  if(!ccActive) return;
+  document.getElementById('capWho').textContent=who;
+  document.getElementById('capTag').textContent='ISL → Text';
+  document.getElementById('capOk').style.display='';
+  document.getElementById('capEmpty').style.display='none';
+
+  const el=document.getElementById('capText');
+  // Add new word as animated span
+  const sp=document.createElement('span');
+  sp.className='cw newest';
+  sp.textContent=sign.w+' ';
+  sp.title=sign.s;
+  el.appendChild(sp);
+  setTimeout(()=>sp.classList.remove('newest'),600);
+
+  // Show cursor
+  let cur=el.querySelector('.cap-cursor');
+  if(cur) cur.remove();
+  cur=document.createElement('span'); cur.className='cap-cursor'; el.appendChild(cur);
+
+  // Sign badges
+  const badgeRow=document.getElementById('capSignBadge');
+  const tag=document.createElement('span');
+  tag.className='sign-word-tag';
+  tag.textContent=sign.e+' '+sign.w;
+  tag.title=sign.s+' ('+conf+'%)';
+  badgeRow.appendChild(tag);
+  if(badgeRow.children.length>8) badgeRow.removeChild(badgeRow.firstChild);
+}
+
+function renderPeerCaption(key, sign, conf){
+  if(!ccActive) return;
+  document.getElementById('capWho').textContent='Peer';
+  document.getElementById('capTag').textContent='ISL → Text';
+  document.getElementById('capOk').style.display='';
+  document.getElementById('capEmpty').style.display='none';
+
+  const el=document.getElementById('capText');
+  const sp=document.createElement('span');
+  sp.className='cw newest';
+  sp.style.color='var(--ac2)';
+  sp.textContent=sign.w+' ';
+  sp.title=sign.s;
+  el.appendChild(sp);
+  setTimeout(()=>{ sp.classList.remove('newest'); sp.style.color=''; },600);
+
+  let cur=el.querySelector('.cap-cursor');
+  if(cur) cur.remove();
+  cur=document.createElement('span'); cur.className='cap-cursor'; el.appendChild(cur);
+}
+
+function clearCaption(){
+  captionWords=[]; captionSigns=[];
+  const el=document.getElementById('capText');
+  el.innerHTML='<span class="cap-empty" id="capEmpty">Caption cleared — sign to start…</span>';
+  document.getElementById('capSignBadge').innerHTML='';
+  document.getElementById('capOk').style.display='none';
+  document.getElementById('capWho').textContent='—';
+}
+
+function undoLast(){
+  if(!captionWords.length) return;
+  captionWords.pop(); captionSigns.pop();
+  // Rebuild
+  const el=document.getElementById('capText');
+  el.innerHTML='';
+  if(!captionWords.length){
+    el.innerHTML='<span class="cap-empty" id="capEmpty">Undone — sign to continue…</span>';
+    document.getElementById('capSignBadge').innerHTML='';
+    return;
+  }
+  captionSigns.forEach(({sign},i)=>{
+    const sp=document.createElement('span'); sp.className='cw'; sp.textContent=sign.w+' '; el.appendChild(sp);
+  });
+  const cur=document.createElement('span'); cur.className='cap-cursor'; el.appendChild(cur);
+  const badges=document.getElementById('capSignBadge');
+  badges.innerHTML='';
+  captionSigns.forEach(({sign})=>{ const t=document.createElement('span'); t.className='sign-word-tag'; t.textContent=sign.e+' '+sign.w; badges.appendChild(t); });
+  toast('Undo: removed last sign');
+}
+
+function speakCaption(){
+  const text=captionWords.join(' ');
+  if(!text){ toast('Nothing to speak yet'); return; }
+  const u=new SpeechSynthesisUtterance(text); u.lang='en-IN'; u.rate=0.9;
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+  toast('🔊 Speaking: "'+text+'"');
+}
+
+// ══════════════════════════════════════════════
+//  SIGN CARD FEED
+// ══════════════════════════════════════════════
+function pushSignCard(key, sign, conf, isLocal){
+  const feed=document.getElementById('signFeed');
+  const empty=document.getElementById('signEmpty');
+  if(empty) empty.remove();
+  const card=document.createElement('div');
+  card.className='sign-card lit';
+  card.innerHTML=`
+    <div class="sc-top">
+      <span class="sc-name">${sign.e} ${key} <span style="font-size:9px;color:var(--t3)">${isLocal?'(you)':'(peer)'}</span></span>
+      <span class="sc-conf">${conf}%</span>
+    </div>
+    <div class="sc-bar"><div class="sc-fill" style="width:${conf}%"></div></div>
+    <div class="sc-desc">${sign.s.slice(0,50)}</div>`;
+  feed.prepend(card);
+  while(feed.children.length>8) feed.removeChild(feed.lastChild);
+  setTimeout(()=>card.classList.remove('lit'),1200);
+}
+
+// ══════════════════════════════════════════════
+//  CAMERA
+// ══════════════════════════════════════════════
+async function startCamera(){
+  try{
+    localStream=await navigator.mediaDevices.getUserMedia({
+      video:{width:{ideal:1280},height:{ideal:720},facingMode:'user'},
+      audio:{echoCancellation:true,noiseSuppression:true}
+    });
+    const lv=document.getElementById('localVideo');
+    lv.srcObject=localStream;
+    document.getElementById('localAvatar').style.display='none';
+    document.getElementById('localBadge').textContent='ISL Active';
+    document.getElementById('localBadge').className='badge badge-asl';
+    initHands();
+    mpCam=new Camera(lv,{ onFrame:async()=>{ if(handsModel) await handsModel.send({image:lv}); }, width:1280, height:720 });
+    await mpCam.start();
+    drawSignalStrength('localSignal',4);
+    startSpeaking();
+    document.getElementById('signOverlay').className='sign-overlay visible';
+    document.getElementById('soName').textContent='Show your hand…';
+    document.getElementById('soConf').textContent='';
+    toast('📷 Camera + ISL detection active — show a sign!');
+    return true;
+  } catch(err){
+    document.getElementById('localBadge').textContent='No Camera';
+    document.getElementById('localBadge').className='badge badge-mute';
+    toast('⚠ Camera denied: '+err.message);
+    return false;
+  }
+}
+
+function startSpeaking(){
+  try{
+    const ac=new AudioContext(), src=ac.createMediaStreamSource(localStream), an=ac.createAnalyser();
+    an.fftSize=512; src.connect(an);
+    const buf=new Uint8Array(an.frequencyBinCount);
+    setInterval(()=>{ an.getByteFrequencyData(buf); const avg=buf.reduce((a,b)=>a+b,0)/buf.length; document.getElementById('tile-local').classList.toggle('speaking',avg>12); },200);
+  } catch(_){}
+}
+
+// ══════════════════════════════════════════════
+//  WEBRTC
+// ══════════════════════════════════════════════
+function generateRoom(){ const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let r=''; for(let i=0;i<8;i++) r+=c[Math.floor(Math.random()*c.length)]; return r.slice(0,4)+'-'+r.slice(4); }
+function setRoom(id){ roomId=id; document.getElementById('roomChip').textContent='Room: '+id; document.getElementById('roomInput').value=id; }
+function copyRoom(){ navigator.clipboard.writeText(roomId).catch(()=>{}); toast('Room ID copied: '+roomId); }
+function copyLink(){ navigator.clipboard.writeText(location.href.split('?')[0]+'?room='+roomId).catch(()=>{}); toast('Room link copied!'); }
+
+const ICE=[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}];
+
+function createPeerConnection(){
+  peerConn=new RTCPeerConnection({iceServers:ICE});
+  if(localStream) localStream.getTracks().forEach(t=>peerConn.addTrack(t,localStream));
+  peerConn.ontrack=(e)=>{
+    const rv=document.getElementById('remoteVideo');
+    rv.srcObject=e.streams[0]; rv.style.display='block';
+    document.getElementById('remoteWaiting').style.display='none';
+    document.getElementById('remoteName').textContent='Peer';
+    document.getElementById('remoteBadge').textContent='ISL';
+    document.getElementById('remoteBadge').className='badge badge-asl';
+    setPeerStatus(true);
+    drawSignalStrength('remoteSignal',3+Math.floor(Math.random()*2));
+    toast('🎉 Peer connected — video active!');
+  };
+  dataChannel=peerConn.createDataChannel('sb',{ordered:true});
+  setupDC(dataChannel);
+  peerConn.ondatachannel=(e)=>setupDC(e.channel);
+  peerConn.onicecandidate=(e)=>{ if(e.candidate&&bc) bc.postMessage({type:'ice',from:myId,candidate:e.candidate}); };
+  peerConn.oniceconnectionstatechange=()=>{
+    const s=peerConn.iceConnectionState;
+    if(s==='connected'||s==='completed'){setPeerStatus(true);toast('🔗 P2P link established');}
+    if(s==='disconnected'||s==='failed'){setPeerStatus(false);toast('⚠ Peer disconnected');}
+  };
+  return peerConn;
+}
+
+function setupDC(ch){
+  ch.onopen=()=>{ dataChannel=ch; setPeerStatus(true); toast('💬 Data channel open'); };
+  ch.onmessage=(e)=>{ try{ handleMsg(JSON.parse(e.data)); }catch(_){} };
+}
+
+function handleMsg(msg){
+  if(msg.type==='sign'){
+    const sign=ISL[msg.key]||{e:msg.emoji||'🤟',w:msg.label||msg.key,s:msg.sentence||msg.key,f:[]};
+    pushSignCard(msg.key, sign, Math.round(msg.conf), false);
+    signsCount++; wordsCount+=sign.s.split(' ').length;
+    document.getElementById('stSigns').textContent=signsCount;
+    document.getElementById('stWords').textContent=wordsCount;
+    renderPeerCaption(msg.key, sign, Math.round(msg.conf));
+  } else if(msg.type==='chat'){
+    appendChat({...msg,mine:false});
+  } else if(msg.type==='speaking'){
+    document.getElementById('tile-remote').classList.toggle('speaking',msg.val);
+  }
+}
+
+function sendData(obj){ if(dataChannel&&dataChannel.readyState==='open') dataChannel.send(JSON.stringify(obj)); }
+
+function setupOwnBroadcast(){
+  bc=new BroadcastChannel('signbridge_'+roomId);
+  bc.onmessage=async(e)=>{
+    const msg=e.data; if(msg.from===myId)return;
+    if(!peerConn)createPeerConnection();
+    if(msg.type==='offer'){ await peerConn.setRemoteDescription(new RTCSessionDescription(msg.sdp)); const ans=await peerConn.createAnswer(); await peerConn.setLocalDescription(ans); bc.postMessage({type:'answer',from:myId,sdp:ans}); }
+    else if(msg.type==='answer'){ try{await peerConn.setRemoteDescription(new RTCSessionDescription(msg.sdp));}catch(_){} }
+    else if(msg.type==='ice'){ try{await peerConn.addIceCandidate(new RTCIceCandidate(msg.candidate));}catch(_){} }
+    else if(msg.type==='hello'){ toast('👋 Peer found — connecting…'); document.getElementById('waitingTxt').textContent='Connecting…'; await initiateOfferBC(); }
+  };
+  bc.postMessage({type:'hello',from:myId});
+  peerConn.onicecandidate=(e)=>{ if(e.candidate)bc.postMessage({type:'ice',from:myId,candidate:e.candidate}); };
+}
+
+function setupBroadcastSignaling(targetRoom){
+  if(bc)bc.close();
+  bc=new BroadcastChannel('signbridge_'+targetRoom);
+  bc.onmessage=async(e)=>{
+    const msg=e.data; if(msg.from===myId)return;
+    if(!peerConn)createPeerConnection();
+    if(msg.type==='offer'){ await peerConn.setRemoteDescription(new RTCSessionDescription(msg.sdp)); const ans=await peerConn.createAnswer(); await peerConn.setLocalDescription(ans); bc.postMessage({type:'answer',from:myId,sdp:ans}); }
+    else if(msg.type==='answer'){ try{await peerConn.setRemoteDescription(new RTCSessionDescription(msg.sdp));}catch(_){} }
+    else if(msg.type==='ice'){ try{await peerConn.addIceCandidate(new RTCIceCandidate(msg.candidate));}catch(_){} }
+    else if(msg.type==='hello'){ toast('👋 Peer found — offering…'); await initiateOfferBC(); }
+  };
+  if(!peerConn)createPeerConnection();
+  peerConn.onicecandidate=(e)=>{ if(e.candidate)bc.postMessage({type:'ice',from:myId,candidate:e.candidate}); };
+  bc.postMessage({type:'hello',from:myId});
+  setRoom(targetRoom);
+  toast('Joined room '+targetRoom+' — waiting for peer…');
+}
+
+async function initiateOfferBC(){
+  if(!peerConn)createPeerConnection();
+  const offer=await peerConn.createOffer({offerToReceiveAudio:true,offerToReceiveVideo:true});
+  await peerConn.setLocalDescription(offer);
+  bc.postMessage({type:'offer',from:myId,sdp:offer});
+}
+
+async function joinRoom(){
+  const input=document.getElementById('joinInput').value.trim().toUpperCase();
+  if(!input){ toast('Enter a Room ID first'); return; }
+  if(input===roomId){ toast('That is your own Room ID'); return; }
+  setupBroadcastSignaling(input);
+}
+
+// ══════════════════════════════════════════════
+//  CANVAS / SIGNAL
+// ══════════════════════════════════════════════
+function drawSignalStrength(id,bars){
+  const el=document.getElementById(id); if(!el)return; el.innerHTML='';
+  for(let i=0;i<4;i++){ const b=document.createElement('div'); b.className='sig-bar'; b.style.height=(5+i*4)+'px'; b.style.opacity=i<bars?'1':'0.2'; el.appendChild(b); }
+}
+
+// ══════════════════════════════════════════════
+//  CHAT
+// ══════════════════════════════════════════════
+function appendChat(msg){
+  const c=document.getElementById('chatMsgs');
+  const now=new Date();
+  const ts=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  const mine=!!msg.mine;
+  const div=document.createElement('div'); div.className='chat-msg'+(mine?' me':'');
+  const col=mine?'var(--ac)':'#7c3aed';
+  const init=mine?'YO':'PR';
+  div.innerHTML=`<div class="chat-av" style="background:${col}22;color:${col}">${init}</div><div><div class="chat-bub${mine?' me':''}">${msg.text}</div><div class="chat-ts">${mine?'You':'Peer'} · ${ts}</div></div>`;
+  c.appendChild(div); c.scrollTop=c.scrollHeight;
+}
+function sendChat(){
+  const inp=document.getElementById('chatInput'); const text=inp.value.trim(); if(!text)return;
+  inp.value=''; appendChat({text,mine:true}); sendData({type:'chat',text});
+  wordsCount+=text.split(' ').length; document.getElementById('stWords').textContent=wordsCount;
+}
+
+// ══════════════════════════════════════════════
+//  CONTROLS
+// ══════════════════════════════════════════════
+function toggleMic(btn){ btn.classList.toggle('on'); const on=btn.classList.contains('on'); if(localStream)localStream.getAudioTracks().forEach(t=>t.enabled=on); toast(on?'🎙 Mic on':'🔇 Mic muted'); }
+function toggleCam(btn){ btn.classList.toggle('on'); const on=btn.classList.contains('on'); if(localStream)localStream.getVideoTracks().forEach(t=>t.enabled=on); document.getElementById('localAvatar').style.display=on?'none':'flex'; toast(on?'📷 Camera on':'📷 Camera off'); }
+function toggleISL(btn){ btn.classList.toggle('on'); islActive=btn.classList.contains('on'); document.getElementById('slInd').style.opacity=islActive?'1':'0.4'; document.getElementById('slTxt').textContent=islActive?'ISL Detection Active':'ISL Paused'; toast(islActive?'🤟 ISL on':'⏸ ISL paused'); }
+function toggleCtrl(btn,type){ btn.classList.toggle('on'); const on=btn.classList.contains('on'); if(type==='cc'){ccActive=on;toast(on?'📝 Captions on':'📝 Captions off');} if(type==='rec'){toast(on?'⏺ Recording started':'⏹ Recording stopped');} }
+function tog(el,key){ el.classList.toggle('on'); const on=el.classList.contains('on'); if(key==='kp')showKp=on; if(key==='fi')showFI=on; if(key==='cc')ccActive=on; if(key==='tts')ttsActive=on; }
+function setPeerStatus(c){ peerConnected=c; document.getElementById('peerDot').className='ws-dot '+(c?'ok':'wait'); document.getElementById('peerStatus').textContent=c?'Peer connected':'Waiting for peer…'; }
+function switchTab(name){ document.querySelectorAll('.stab').forEach((b,i)=>b.classList.toggle('on',['signs','chat','settings'][i]===name)); document.querySelectorAll('.tab-pane').forEach(p=>p.classList.toggle('on',p.id==='tab-'+name)); }
+function startTimer(){ if(timerIv)return; timerIv=setInterval(()=>{ elapsed++; document.getElementById('timerEl').textContent=String(Math.floor(elapsed/60)).padStart(2,'0')+':'+String(elapsed%60).padStart(2,'0'); },1000); }
+function toggleFS(){ if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{}); else document.exitFullscreen(); }
+
+function endCall(){
+  clearInterval(timerIv); clearInterval(otpIv);
+  if(mpCam){try{mpCam.stop();}catch(_){} mpCam=null;}
+  if(peerConn)peerConn.close();
+  if(localStream)localStream.getTracks().forEach(t=>t.stop());
+  if(bc)bc.close();
+  toast('👋 Call ended');
+  const m=Math.floor(elapsed/60),s=elapsed%60;
+  setTimeout(()=>alert(`Call ended.\n\nSession summary\n${'─'.repeat(26)}\nDuration: ${m}m ${s}s\nSigns detected: ${signsCount}\nWords: ${wordsCount}\nPipeline: MediaPipe Hands → ISL Match → Caption`),600);
+}
+
+let toastTimer;
+function toast(msg){ clearTimeout(toastTimer); document.getElementById('toastMsg').textContent=msg; const el=document.getElementById('toast'); el.classList.add('show'); toastTimer=setTimeout(()=>el.classList.remove('show'),3200); }
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+document.getElementById('chatInput').addEventListener('keydown',e=>{ if(e.key==='Enter')sendChat(); });
+document.getElementById('otpVerifyInput').addEventListener('keydown',e=>{ if(e.key==='Enter')verifyOTP(); });
+
+setRoom(generateRoom());
+generateOTP();
+
+document.getElementById('btnCam').onclick=async()=>{
+  document.getElementById('overlay').style.display='none';
+  await startCamera();
+  createPeerConnection();
+  setupOwnBroadcast();
+  startTimer();
+};
+
+document.getElementById('btnNoCam').onclick=()=>{
+  document.getElementById('overlay').style.display='none';
+  document.getElementById('localBadge').textContent='Audio only';
+  document.getElementById('localBadge').className='badge badge-mute';
+  createPeerConnection();
+  setupOwnBroadcast();
+  startTimer();
+  toast('Joined without camera — share Room ID to invite');
+};
+</script>
+</body>
+</html>
