@@ -403,10 +403,10 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
           </div>
         </div>
         <div class="room-share" style="margin-top:4px">
-          <label>Call a peer (paste their Room ID)</label>
-          <input type="text" class="room-inp" id="joinInput" placeholder="e.g. SB-A3KX9F">
+          <label>Join a room (paste peer's Room ID)</label>
+          <input type="text" class="room-inp" id="joinInput" placeholder="e.g. GK9T-SVFK">
           <div class="btn-row">
-            <button class="sbtn primary" onclick="joinRoom()">Call &amp; Connect</button>
+            <button class="sbtn primary" onclick="joinRoom()">Connect</button>
           </div>
         </div>
         <div class="slabel" style="margin-top:6px">OTP verification</div>
@@ -456,8 +456,6 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
 <!-- MediaPipe -->
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/hands.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1640029074/camera_utils.js" crossorigin="anonymous"></script>
-<!-- PeerJS — cross-device P2P signaling -->
-<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 
 <script>
 // ══════════════════════════════════════════════
@@ -513,7 +511,7 @@ const PATTERNS = [
 // ══════════════════════════════════════════════
 //  STATE
 // ══════════════════════════════════════════════
-let localStream=null, peer=null, peerCall=null, peerDC=null;
+let localStream=null, peerConn=null, dataChannel=null, bc=null;
 let roomId='', elapsed=0, timerIv=null;
 let signsCount=0, wordsCount=0;
 let islActive=true, showKp=true, showFI=true, ccActive=true, ttsActive=false;
@@ -873,85 +871,52 @@ function startSpeaking(){
 // ══════════════════════════════════════════════
 //  WEBRTC
 // ══════════════════════════════════════════════
-function generateRoom(){ const c='abcdefghjkmnpqrstuvwxyz23456789'; let r='SB-'; for(let i=0;i<6;i++) r+=c[Math.floor(Math.random()*c.length)]; return r; }
+function generateRoom(){ const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let r=''; for(let i=0;i<8;i++) r+=c[Math.floor(Math.random()*c.length)]; return r.slice(0,4)+'-'+r.slice(4); }
 function setRoom(id){ roomId=id; document.getElementById('roomChip').textContent='Room: '+id; document.getElementById('roomInput').value=id; }
 function copyRoom(){ navigator.clipboard.writeText(roomId).catch(()=>{}); toast('Room ID copied: '+roomId); }
 function copyLink(){ navigator.clipboard.writeText(location.href.split('?')[0]+'?room='+roomId).catch(()=>{}); toast('Room link copied!'); }
 
-// ══════════════════════════════════════════════
-//  PEERJS — works across ANY two devices globally
-//  Peer ID = your shareable Room ID
-// ══════════════════════════════════════════════
-let peer=null, peerCall=null, peerDC=null;
+const ICE=[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}];
 
-function initPeerJS(){
-  setWSStatus('connecting');
-  // Use the free PeerJS cloud server
-  peer=new Peer(roomId,{
-    host:'0.peerjs.com', port:443, path:'/', secure:true,
-    config:{ iceServers:[
-      {urls:'stun:stun.l.google.com:19302'},
-      {urls:'stun:stun1.l.google.com:19302'},
-      {urls:'stun:stun2.l.google.com:19302'},
-    ]}
-  });
-
-  peer.on('open', id=>{
-    setRoom(id);
-    setWSStatus('ready');
-    toast('✅ Ready! Share your Room ID: '+id);
-  });
-
-  peer.on('error', err=>{
-    // If ID taken (room already exists), generate new one
-    if(err.type==='unavailable-id'){
-      roomId='SB-'+Math.random().toString(36).slice(2,8).toUpperCase();
-      initPeerJS();
-    } else {
-      setWSStatus('error');
-      toast('⚠ Connection error: '+err.message);
-    }
-  });
-
-  // Someone is calling us (they typed our Room ID and clicked Connect)
-  peer.on('call', call=>{
-    peerCall=call;
-    call.answer(localStream||undefined);
-    call.on('stream', remoteStream=>{ attachRemoteStream(remoteStream); });
-    call.on('close',()=>{ setPeerStatus(false); toast('Peer disconnected'); });
-    call.on('error', e=>toast('Call error: '+e));
-    toast('📞 Incoming call — connecting…');
-  });
-
-  // Data channel from caller side
-  peer.on('connection', conn=>{
-    peerDC=conn;
-    conn.on('open',()=>{ setPeerStatus(true); toast('💬 Data channel open'); });
-    conn.on('data', d=>{ try{ handleMsg(typeof d==='string'?JSON.parse(d):d); }catch(_){} });
-    conn.on('close',()=>setPeerStatus(false));
-  });
+function createPeerConnection(){
+  peerConn=new RTCPeerConnection({iceServers:ICE});
+  if(localStream) localStream.getTracks().forEach(t=>peerConn.addTrack(t,localStream));
+  peerConn.ontrack=(e)=>{
+    const rv=document.getElementById('remoteVideo');
+    rv.srcObject=e.streams[0]; rv.style.display='block';
+    document.getElementById('remoteWaiting').style.display='none';
+    document.getElementById('remoteName').textContent='Peer';
+    document.getElementById('remoteBadge').textContent='ISL';
+    document.getElementById('remoteBadge').className='badge badge-asl';
+    setPeerStatus(true);
+    drawSignalStrength('remoteSignal',3+Math.floor(Math.random()*2));
+    toast('🎉 Peer connected — video active!');
+  };
+  dataChannel=peerConn.createDataChannel('sb',{ordered:true});
+  setupDC(dataChannel);
+  peerConn.ondatachannel=(e)=>setupDC(e.channel);
+  peerConn.onicecandidate=(e)=>{ if(e.candidate&&bc) bc.postMessage({type:'ice',from:myId,candidate:e.candidate}); };
+  peerConn.oniceconnectionstatechange=()=>{
+    const s=peerConn.iceConnectionState;
+    if(s==='connected'||s==='completed'){setPeerStatus(true);toast('🔗 P2P link established');}
+    if(s==='disconnected'||s==='failed'){setPeerStatus(false);toast('⚠ Peer disconnected');}
+  };
+  return peerConn;
 }
 
-function attachRemoteStream(stream){
-  const rv=document.getElementById('remoteVideo');
-  rv.srcObject=stream; rv.style.display='block';
-  document.getElementById('remoteWaiting').style.display='none';
-  document.getElementById('remoteName').textContent='Peer';
-  document.getElementById('remoteBadge').textContent='ISL';
-  document.getElementById('remoteBadge').className='badge badge-asl';
-  setPeerStatus(true);
-  drawSignalStrength('remoteSignal',4);
-  toast('🎉 Peer video connected!');
+function setupDC(ch){
+  ch.onopen=()=>{ dataChannel=ch; setPeerStatus(true); toast('💬 Data channel open'); };
+  ch.onmessage=(e)=>{ try{ handleMsg(JSON.parse(e.data)); }catch(_){} };
 }
 
 function handleMsg(msg){
   if(msg.type==='sign'){
     const sign=ISL[msg.key]||{e:msg.emoji||'🤟',w:msg.label||msg.key,s:msg.sentence||msg.key,f:[]};
-    pushSignCard(msg.key,sign,Math.round(msg.conf),false);
+    pushSignCard(msg.key, sign, Math.round(msg.conf), false);
     signsCount++; wordsCount+=sign.s.split(' ').length;
     document.getElementById('stSigns').textContent=signsCount;
     document.getElementById('stWords').textContent=wordsCount;
-    renderPeerCaption(msg.key,sign,Math.round(msg.conf));
+    renderPeerCaption(msg.key, sign, Math.round(msg.conf));
   } else if(msg.type==='chat'){
     appendChat({...msg,mine:false});
   } else if(msg.type==='speaking'){
@@ -959,40 +924,52 @@ function handleMsg(msg){
   }
 }
 
-function sendData(obj){
-  const data=JSON.stringify(obj);
-  if(peerDC&&peerDC.open) peerDC.send(data);
+function sendData(obj){ if(dataChannel&&dataChannel.readyState==='open') dataChannel.send(JSON.stringify(obj)); }
+
+function setupOwnBroadcast(){
+  bc=new BroadcastChannel('signbridge_'+roomId);
+  bc.onmessage=async(e)=>{
+    const msg=e.data; if(msg.from===myId)return;
+    if(!peerConn)createPeerConnection();
+    if(msg.type==='offer'){ await peerConn.setRemoteDescription(new RTCSessionDescription(msg.sdp)); const ans=await peerConn.createAnswer(); await peerConn.setLocalDescription(ans); bc.postMessage({type:'answer',from:myId,sdp:ans}); }
+    else if(msg.type==='answer'){ try{await peerConn.setRemoteDescription(new RTCSessionDescription(msg.sdp));}catch(_){} }
+    else if(msg.type==='ice'){ try{await peerConn.addIceCandidate(new RTCIceCandidate(msg.candidate));}catch(_){} }
+    else if(msg.type==='hello'){ toast('👋 Peer found — connecting…'); document.getElementById('waitingTxt').textContent='Connecting…'; await initiateOfferBC(); }
+  };
+  bc.postMessage({type:'hello',from:myId});
+  peerConn.onicecandidate=(e)=>{ if(e.candidate)bc.postMessage({type:'ice',from:myId,candidate:e.candidate}); };
+}
+
+function setupBroadcastSignaling(targetRoom){
+  if(bc)bc.close();
+  bc=new BroadcastChannel('signbridge_'+targetRoom);
+  bc.onmessage=async(e)=>{
+    const msg=e.data; if(msg.from===myId)return;
+    if(!peerConn)createPeerConnection();
+    if(msg.type==='offer'){ await peerConn.setRemoteDescription(new RTCSessionDescription(msg.sdp)); const ans=await peerConn.createAnswer(); await peerConn.setLocalDescription(ans); bc.postMessage({type:'answer',from:myId,sdp:ans}); }
+    else if(msg.type==='answer'){ try{await peerConn.setRemoteDescription(new RTCSessionDescription(msg.sdp));}catch(_){} }
+    else if(msg.type==='ice'){ try{await peerConn.addIceCandidate(new RTCIceCandidate(msg.candidate));}catch(_){} }
+    else if(msg.type==='hello'){ toast('👋 Peer found — offering…'); await initiateOfferBC(); }
+  };
+  if(!peerConn)createPeerConnection();
+  peerConn.onicecandidate=(e)=>{ if(e.candidate)bc.postMessage({type:'ice',from:myId,candidate:e.candidate}); };
+  bc.postMessage({type:'hello',from:myId});
+  setRoom(targetRoom);
+  toast('Joined room '+targetRoom+' — waiting for peer…');
+}
+
+async function initiateOfferBC(){
+  if(!peerConn)createPeerConnection();
+  const offer=await peerConn.createOffer({offerToReceiveAudio:true,offerToReceiveVideo:true});
+  await peerConn.setLocalDescription(offer);
+  bc.postMessage({type:'offer',from:myId,sdp:offer});
 }
 
 async function joinRoom(){
-  const input=document.getElementById('joinInput').value.trim().toUpperCase().replace(/\s/g,'');
-  if(!input){ toast('Paste your peer\'s Room ID first'); return; }
+  const input=document.getElementById('joinInput').value.trim().toUpperCase();
+  if(!input){ toast('Enter a Room ID first'); return; }
   if(input===roomId){ toast('That is your own Room ID'); return; }
-  if(!peer||!peer.open){ toast('⚠ Still connecting to server — wait a moment'); return; }
-
-  toast('📞 Calling peer '+input+'…');
-  document.getElementById('waitingTxt').textContent='Calling '+input+'…';
-
-  // 1. Open data channel
-  peerDC=peer.connect(input,{reliable:true});
-  peerDC.on('open',()=>{ setPeerStatus(true); toast('💬 Data channel open'); });
-  peerDC.on('data',d=>{ try{ handleMsg(typeof d==='string'?JSON.parse(d):d); }catch(_){} });
-  peerDC.on('close',()=>setPeerStatus(false));
-  peerDC.on('error',e=>toast('DC error: '+e));
-
-  // 2. Video call
-  peerCall=peer.call(input, localStream||new MediaStream());
-  peerCall.on('stream', remoteStream=>{ attachRemoteStream(remoteStream); });
-  peerCall.on('close',()=>{ setPeerStatus(false); toast('Call ended by peer'); });
-  peerCall.on('error',e=>toast('Call error: '+e));
-}
-
-function setWSStatus(state){
-  const dot=document.getElementById('peerDot');
-  const txt=document.getElementById('peerStatus');
-  if(state==='connecting'){ dot.className='ws-dot wait'; txt.textContent='Connecting to server…'; }
-  else if(state==='ready'){ dot.className='ws-dot ok'; txt.textContent='Ready — share Room ID'; }
-  else if(state==='error'){ dot.className='ws-dot no'; txt.textContent='Server error — retry'; }
+  setupBroadcastSignaling(input);
 }
 
 // ══════════════════════════════════════════════
@@ -1031,7 +1008,7 @@ function toggleCam(btn){ btn.classList.toggle('on'); const on=btn.classList.cont
 function toggleISL(btn){ btn.classList.toggle('on'); islActive=btn.classList.contains('on'); document.getElementById('slInd').style.opacity=islActive?'1':'0.4'; document.getElementById('slTxt').textContent=islActive?'ISL Detection Active':'ISL Paused'; toast(islActive?'🤟 ISL on':'⏸ ISL paused'); }
 function toggleCtrl(btn,type){ btn.classList.toggle('on'); const on=btn.classList.contains('on'); if(type==='cc'){ccActive=on;toast(on?'📝 Captions on':'📝 Captions off');} if(type==='rec'){toast(on?'⏺ Recording started':'⏹ Recording stopped');} }
 function tog(el,key){ el.classList.toggle('on'); const on=el.classList.contains('on'); if(key==='kp')showKp=on; if(key==='fi')showFI=on; if(key==='cc')ccActive=on; if(key==='tts')ttsActive=on; }
-function setPeerStatus(c){ peerConnected=c; document.getElementById('peerDot').className='ws-dot '+(c?'ok':'wait'); document.getElementById('peerStatus').textContent=c?'✅ Peer connected':'Waiting for peer…'; }
+function setPeerStatus(c){ peerConnected=c; document.getElementById('peerDot').className='ws-dot '+(c?'ok':'wait'); document.getElementById('peerStatus').textContent=c?'Peer connected':'Waiting for peer…'; }
 function switchTab(name){ document.querySelectorAll('.stab').forEach((b,i)=>b.classList.toggle('on',['signs','chat','settings'][i]===name)); document.querySelectorAll('.tab-pane').forEach(p=>p.classList.toggle('on',p.id==='tab-'+name)); }
 function startTimer(){ if(timerIv)return; timerIv=setInterval(()=>{ elapsed++; document.getElementById('timerEl').textContent=String(Math.floor(elapsed/60)).padStart(2,'0')+':'+String(elapsed%60).padStart(2,'0'); },1000); }
 function toggleFS(){ if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{}); else document.exitFullscreen(); }
@@ -1039,10 +1016,9 @@ function toggleFS(){ if(!document.fullscreenElement)document.documentElement.req
 function endCall(){
   clearInterval(timerIv); clearInterval(otpIv);
   if(mpCam){try{mpCam.stop();}catch(_){} mpCam=null;}
-  if(peerCall) peerCall.close();
-  if(peerDC) peerDC.close();
-  if(peer) peer.destroy();
+  if(peerConn)peerConn.close();
   if(localStream)localStream.getTracks().forEach(t=>t.stop());
+  if(bc)bc.close();
   toast('👋 Call ended');
   const m=Math.floor(elapsed/60),s=elapsed%60;
   setTimeout(()=>alert(`Call ended.\n\nSession summary\n${'─'.repeat(26)}\nDuration: ${m}m ${s}s\nSigns detected: ${signsCount}\nWords: ${wordsCount}\nPipeline: MediaPipe Hands → ISL Match → Caption`),600);
@@ -1063,7 +1039,8 @@ generateOTP();
 document.getElementById('btnCam').onclick=async()=>{
   document.getElementById('overlay').style.display='none';
   await startCamera();
-  initPeerJS();
+  createPeerConnection();
+  setupOwnBroadcast();
   startTimer();
 };
 
@@ -1071,7 +1048,8 @@ document.getElementById('btnNoCam').onclick=()=>{
   document.getElementById('overlay').style.display='none';
   document.getElementById('localBadge').textContent='Audio only';
   document.getElementById('localBadge').className='badge badge-mute';
-  initPeerJS();
+  createPeerConnection();
+  setupOwnBroadcast();
   startTimer();
   toast('Joined without camera — share Room ID to invite');
 };
