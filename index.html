@@ -20,7 +20,6 @@
 html,body{height:100%;overflow:hidden;background:var(--bg)}
 body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction:column;position:relative}
 
-/* TOP BAR */
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;background:var(--white);border-bottom:1px solid var(--bd);flex-shrink:0;gap:10px;box-shadow:var(--sh)}
 .logo{display:flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--ac)}
 .logo-box{width:28px;height:28px;background:var(--ac);border-radius:8px;display:flex;align-items:center;justify-content:center}
@@ -35,7 +34,6 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
 .hbtn{width:32px;height:32px;background:var(--s1);border:1px solid var(--bd);border-radius:var(--rsm);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t2);font-size:14px;transition:all .18s}
 .hbtn:hover{background:var(--acl);color:var(--ac);border-color:var(--ac)}
 
-/* OTP STRIP */
 .otp-strip{background:var(--white);border-bottom:1px solid var(--bd);padding:8px 18px;display:flex;align-items:center;gap:14px;flex-shrink:0}
 .otp-label{font-size:11px;font-weight:500;color:var(--t3);white-space:nowrap}
 .otp-digits{display:flex;gap:5px}
@@ -53,10 +51,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
 .otp-btn.regen:hover{opacity:.88}
 .otp-btn.copied{background:var(--ac3l);color:var(--ac3);border-color:var(--ac3)}
 
-/* WORKSPACE */
 .workspace{display:grid;grid-template-columns:1fr 288px;flex:1;overflow:hidden;min-height:0}
-
-/* VIDEO COL */
 .video-col{display:flex;flex-direction:column;padding:12px;gap:10px;overflow:hidden}
 .video-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;min-height:0}
 .vtile{position:relative;background:var(--s2);border:1.5px solid var(--bd);border-radius:var(--r);overflow:hidden;display:flex;align-items:center;justify-content:center;transition:border-color .25s,box-shadow .25s}
@@ -71,21 +66,17 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
 .badge{font-size:9px;font-weight:600;padding:2px 7px;border-radius:10px;letter-spacing:.02em}
 .badge-asl{background:#dbeafe;color:#1d4ed8;border:1px solid #bfdbfe}
 .badge-mute{background:var(--s2);color:var(--t3);border:1px solid var(--bd)}
-.badge-ok{background:#d1fae5;color:#065f46;border:1px solid #a7f3d0}
 .tile-signal{position:absolute;top:8px;left:8px;display:flex;gap:2px;align-items:flex-end}
 .sig-bar{width:3px;border-radius:1px;background:var(--ac3)}
 
-/* sign overlay on tile */
-.sign-overlay{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.93);border:1px solid var(--bd);border-radius:var(--rsm);padding:5px 10px;font-size:12px;font-weight:600;color:var(--t);box-shadow:var(--sh);display:none;align-items:center;gap:6px;backdrop-filter:blur(4px)}
+.sign-overlay{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.93);border:1px solid var(--bd);border-radius:var(--rsm);padding:5px 10px;font-size:12px;font-weight:600;color:var(--t);box-shadow:var(--sh);display:none;align-items:center;gap:6px}
 .sign-overlay.visible{display:flex}
 .sign-overlay .so-emoji{font-size:18px}
 .sign-overlay .so-conf{font-size:10px;color:var(--ac3);font-family:'DM Mono',monospace}
 
-/* hold ring */
 .hold-ring-wrap{position:absolute;bottom:44px;left:50%;transform:translateX(-50%);display:none}
 .hold-ring-wrap.visible{display:block}
 
-/* finger state */
 .finger-row{position:absolute;bottom:44px;left:10px;display:flex;gap:3px;display:none}
 .finger-row.visible{display:flex}
 .fp{width:20px;height:20px;border-radius:4px;border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;transition:all .12s}
@@ -97,7 +88,6 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
 @keyframes spin{to{transform:rotate(360deg)}}
 .conn-txt{font-size:12px;color:var(--t2);text-align:center;padding:0 16px}
 
-/* CAPTION BOX */
 .caption-box{background:var(--white);border:1px solid var(--bd);border-radius:var(--r);padding:12px 16px;flex-shrink:0;box-shadow:var(--sh)}
 .cap-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .cap-left{display:flex;align-items:center;gap:8px}
@@ -108,17 +98,16 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
 .cap-action{font-size:10px;padding:3px 9px;border-radius:12px;border:1px solid var(--bd);background:var(--s1);color:var(--t2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
 .cap-action:hover{border-color:var(--ac);color:var(--ac);background:var(--acl)}
 .cap-action.red{color:var(--err);border-color:rgba(220,38,38,.3);background:var(--errl)}
-.cap-body{min-height:52px;background:var(--s1);border:1px solid var(--bd);border-radius:var(--rsm);padding:10px 12px;position:relative}
+.cap-body{min-height:52px;background:var(--s1);border:1px solid var(--bd);border-radius:var(--rsm);padding:10px 12px}
 .cap-text{font-size:15px;color:var(--t);line-height:1.6;word-break:break-word;min-height:24px}
 .cap-text .cw{display:inline;margin-right:4px}
 .cap-text .cw.newest{color:var(--ac);animation:wfade .35s ease}
 @keyframes wfade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 .cap-cursor{display:inline-block;width:2px;height:17px;background:var(--ac);margin-left:2px;vertical-align:middle;animation:blink .85s infinite}
 .cap-empty{font-size:13px;color:var(--t3)}
-.cap-sign-badge{display:flex;align-items:center;gap:4px;margin-top:6px;flex-wrap:wrap;gap:4px}
+.cap-sign-badge{display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-top:6px}
 .sign-word-tag{font-size:11px;padding:2px 8px;border-radius:10px;background:#dbeafe;color:#1d4ed8;border:1px solid #bfdbfe;font-weight:500}
 
-/* SIDEBAR */
 .sidebar{background:var(--white);border-left:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden;box-shadow:-2px 0 8px rgba(0,0,0,.04)}
 .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:10px 12px 6px;flex-shrink:0}
 .stat-box{background:var(--s1);border:1px solid var(--bd);border-radius:var(--rsm);padding:7px 6px;text-align:center}
@@ -134,7 +123,6 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
 .tab-pane.on{display:flex}
 .slabel{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--t3);margin-bottom:2px}
 
-/* sign cards */
 .sign-card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--rsm);padding:8px 10px;transition:all .25s}
 .sign-card.lit{border-color:var(--ac);background:var(--acl)}
 .sc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
@@ -144,16 +132,13 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
 .sc-fill{height:100%;border-radius:1px;background:var(--ac);transition:width .4s ease}
 .sc-desc{font-size:10px;color:var(--t3);margin-top:4px}
 
-/* chat */
 .chat-msg{display:flex;gap:7px;align-items:flex-start}
 .chat-msg.me{flex-direction:row-reverse}
 .chat-av{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600}
 .chat-bub{background:var(--s1);border:1px solid var(--bd);border-radius:6px 12px 12px 6px;padding:7px 10px;font-size:12px;line-height:1.5;max-width:190px;word-break:break-word;color:var(--t)}
 .chat-bub.me{border-radius:12px 6px 6px 12px;background:var(--ac);color:#fff;border-color:var(--ac)}
-.chat-bub.sl{border-color:#bfdbfe;background:#eff6ff}
 .chat-ts{font-size:9px;color:var(--t3);margin-top:2px;font-family:'DM Mono',monospace}
 
-/* settings */
 .trow{display:flex;align-items:center;justify-content:space-between;background:var(--s1);border:1px solid var(--bd);border-radius:var(--rsm);padding:9px 11px}
 .trow-l{font-size:12px;font-weight:500;color:var(--t)}
 .trow-s{font-size:10px;color:var(--t3);margin-top:1px}
@@ -176,7 +161,6 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
 .sbtn.primary{background:var(--ac);color:#fff;border-color:var(--ac);font-weight:500}
 .sbtn.primary:hover{opacity:.88}
 
-/* chat input */
 .chat-input-area{padding:10px 12px;border-top:1px solid var(--bd);display:flex;gap:7px;align-items:center;flex-shrink:0}
 .chat-inp{flex:1;background:var(--s1);border:1px solid var(--bd);border-radius:18px;padding:7px 13px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--t);outline:none}
 .chat-inp:focus{border-color:var(--ac);background:var(--white)}
@@ -184,7 +168,6 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
 .send-btn{width:30px;height:30px;background:var(--ac);border:none;border-radius:50%;cursor:pointer;color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;transition:transform .1s;flex-shrink:0}
 .send-btn:active{transform:scale(.88)}
 
-/* CONTROLS */
 .ctrlbar{background:var(--white);border-top:1px solid var(--bd);padding:9px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:10px;box-shadow:0 -1px 3px rgba(0,0,0,.05)}
 .ctrl-grp{display:flex;gap:6px;align-items:center}
 .cbtn{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--s1);border:1px solid var(--bd);border-radius:var(--rsm);padding:7px 12px;cursor:pointer;color:var(--t2);transition:all .15s;min-width:56px;user-select:none}
@@ -198,11 +181,9 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
 .end-btn{background:var(--err);border:none;color:#fff;padding:9px 20px;border-radius:var(--rsm);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;transition:opacity .15s}
 .end-btn:hover{opacity:.84}
 
-/* TOAST */
 .toast{position:absolute;top:52px;right:14px;background:var(--white);border:1px solid var(--bd);border-radius:var(--rsm);padding:9px 14px;font-size:12px;color:var(--t);z-index:999;display:flex;align-items:center;gap:7px;max-width:300px;transform:translateX(115%);transition:transform .25s ease;pointer-events:none;box-shadow:var(--shmd)}
 .toast.show{transform:translateX(0)}
 
-/* OVERLAY */
 .overlay{position:absolute;inset:0;z-index:200;background:rgba(240,242,245,.97);display:flex;align-items:center;justify-content:center}
 .consent-box{background:var(--white);border:1px solid var(--bd);border-radius:16px;padding:32px 28px;max-width:440px;width:90%;text-align:center;box-shadow:var(--shmd)}
 .cb-logo{width:52px;height:52px;background:var(--ac);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:26px}
@@ -225,13 +206,13 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
   <div class="consent-box">
     <div class="cb-logo">🤟</div>
     <div class="cb-title">SignBridge</div>
-    <div class="cb-sub">Show ISL signs to your camera — the app detects your hand gestures in real-time and generates live captions automatically. Share your Room ID to connect with a peer.</div>
+    <div class="cb-sub">Show ISL signs to your camera — detects hand gestures in real-time and generates live captions. Share your Room ID with anyone to connect across any device.</div>
     <div class="tech-wrap">
       <span class="tech-pill">MediaPipe Hands</span>
       <span class="tech-pill">ISL Detection</span>
       <span class="tech-pill">Live Captions</span>
       <span class="tech-pill">OTP Security</span>
-      <span class="tech-pill">WebRTC P2P</span>
+      <span class="tech-pill">PeerJS WebRTC</span>
     </div>
     <div class="cb-acts">
       <button class="btn-g" id="btnNoCam">Join without camera</button>
@@ -249,13 +230,13 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
     SignBridge
   </div>
   <div class="room-row">
-    <span class="room-chip" id="roomChip" onclick="copyRoom()">Room: ···</span>
+    <span class="room-chip" id="roomChip" onclick="copyRoom()" title="Click to copy Room ID">Room: connecting…</span>
     <span class="live-pill"><span class="live-dot"></span>LIVE</span>
     <span class="timer-txt" id="timerEl">00:00</span>
   </div>
   <div class="hdr-btns">
-    <div class="hbtn" onclick="switchTab('settings')">⚙</div>
-    <div class="hbtn" onclick="toggleFS()">⛶</div>
+    <div class="hbtn" onclick="switchTab('settings')" title="Settings">⚙</div>
+    <div class="hbtn" onclick="toggleFS()" title="Fullscreen">⛶</div>
   </div>
 </div>
 
@@ -271,7 +252,8 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
     <div class="otp-arc-wrap">
       <svg width="20" height="20" viewBox="0 0 20 20">
         <circle cx="10" cy="10" r="7" fill="none" stroke="#e2e8f0" stroke-width="2.5"/>
-        <circle id="otpArc" cx="10" cy="10" r="7" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="43.98" stroke-dashoffset="0"/>
+        <circle id="otpArc" cx="10" cy="10" r="7" fill="none" stroke="#2563eb"
+          stroke-width="2.5" stroke-linecap="round" stroke-dasharray="43.98" stroke-dashoffset="0"/>
       </svg>
     </div>
     <span class="otp-exp" id="otpExp">30s</span>
@@ -287,20 +269,18 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
   <div class="video-col">
     <div class="video-row">
 
-      <!-- LOCAL TILE (with ISL detection) -->
+      <!-- LOCAL TILE -->
       <div class="vtile" id="tile-local">
         <div class="tile-avatar" id="localAvatar">
           <div class="avatar-ring" style="background:#dbeafe;color:#1d4ed8">You</div>
         </div>
         <video id="localVideo" autoplay muted playsinline></video>
         <canvas id="localCanvas"></canvas>
-        <!-- sign overlay top-right -->
         <div class="sign-overlay" id="signOverlay">
           <span class="so-emoji" id="soEmoji">🤟</span>
-          <span id="soName">Detecting…</span>
+          <span id="soName">Show your hand…</span>
           <span class="so-conf" id="soConf"></span>
         </div>
-        <!-- finger state bottom-left -->
         <div class="finger-row" id="fingerRow">
           <div class="fp dn" id="fp0">T</div>
           <div class="fp dn" id="fp1">I</div>
@@ -308,11 +288,11 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
           <div class="fp dn" id="fp3">R</div>
           <div class="fp dn" id="fp4">P</div>
         </div>
-        <!-- hold ring -->
         <div class="hold-ring-wrap" id="holdRingWrap">
           <svg width="48" height="48" viewBox="0 0 48 48">
             <circle cx="24" cy="24" r="20" fill="none" stroke="#e2e8f0" stroke-width="3"/>
-            <circle id="holdArc" cx="24" cy="24" r="20" fill="none" stroke="#2563eb" stroke-width="3" stroke-linecap="round"
+            <circle id="holdArc" cx="24" cy="24" r="20" fill="none" stroke="#2563eb"
+              stroke-width="3" stroke-linecap="round"
               stroke-dasharray="125.66" stroke-dashoffset="125.66" transform="rotate(-90 24 24)"/>
           </svg>
         </div>
@@ -327,7 +307,9 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
       <div class="vtile" id="tile-remote">
         <div class="conn-screen" id="remoteWaiting">
           <div class="spinner"></div>
-          <div class="conn-txt" id="waitingTxt">Waiting for peer…<br><span style="font-size:10px;color:var(--t3)">Share Room ID to invite</span></div>
+          <div class="conn-txt" id="waitingTxt">Waiting for peer…<br>
+            <span style="font-size:10px;color:var(--t3)">Share your Room ID to invite</span>
+          </div>
         </div>
         <video id="remoteVideo" autoplay playsinline style="display:none"></video>
         <canvas id="remoteCanvas"></canvas>
@@ -339,7 +321,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
       </div>
     </div>
 
-    <!-- LIVE CAPTION BOX -->
+    <!-- CAPTION BOX -->
     <div class="caption-box">
       <div class="cap-header">
         <div class="cap-left">
@@ -376,6 +358,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
     </div>
     <div class="spanel">
 
+      <!-- SIGNS TAB -->
       <div class="tab-pane on" id="tab-signs">
         <div class="slabel">Detected signs</div>
         <div id="signFeed" style="display:flex;flex-direction:column;gap:5px">
@@ -383,52 +366,61 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
         </div>
       </div>
 
+      <!-- CHAT TAB -->
       <div class="tab-pane" id="tab-chat">
         <div class="slabel">Meeting chat</div>
         <div id="chatMsgs" style="display:flex;flex-direction:column;gap:7px"></div>
       </div>
 
+      <!-- SETTINGS TAB -->
       <div class="tab-pane" id="tab-settings">
-        <div class="slabel">Connection</div>
+        <div class="slabel">Connection status</div>
         <div class="ws-row">
           <div class="ws-dot wait" id="peerDot"></div>
-          <span id="peerStatus">Not connected to peer</span>
+          <span id="peerStatus">Connecting to server…</span>
         </div>
+
         <div class="room-share">
-          <label>Your room ID</label>
-          <input type="text" class="room-inp" id="roomInput" readonly>
+          <label>Your Room ID — share this with your peer</label>
+          <input type="text" class="room-inp" id="roomInput" readonly placeholder="Generating…">
           <div class="btn-row">
             <button class="sbtn" onclick="copyRoom()">Copy ID</button>
-            <button class="sbtn" onclick="copyLink()">Copy link</button>
+            <button class="sbtn" onclick="copyFullLink()">Copy full link</button>
           </div>
         </div>
+
         <div class="room-share" style="margin-top:4px">
-          <label>Join a room (paste peer's Room ID)</label>
-          <input type="text" class="room-inp" id="joinInput" placeholder="e.g. GK9T-SVFK">
+          <label>Connect to peer — paste their Room ID</label>
+          <input type="text" class="room-inp" id="joinInput" placeholder="e.g. sb-a3kx9f">
           <div class="btn-row">
-            <button class="sbtn primary" onclick="joinRoom()">Connect</button>
+            <button class="sbtn primary" onclick="joinRoom()">Call &amp; Connect</button>
           </div>
         </div>
+
         <div class="slabel" style="margin-top:6px">OTP verification</div>
         <div class="room-share">
-          <label>Enter peer's 6-digit OTP</label>
+          <label>Enter peer's 6-digit OTP to verify</label>
           <input type="text" class="room-inp" id="otpVerifyInput" placeholder="e.g. 482931" maxlength="6">
           <div class="btn-row">
             <button class="sbtn primary" onclick="verifyOTP()">Verify peer</button>
           </div>
         </div>
+
         <div class="slabel" style="margin-top:6px">ISL detection</div>
         <div class="trow"><div><div class="trow-l">Show skeleton</div><div class="trow-s">Hand landmark overlay</div></div><div class="tog on" id="tgl-kp" onclick="tog(this,'kp')"><div class="tok"></div></div></div>
         <div class="trow"><div><div class="trow-l">Finger indicators</div><div class="trow-s">T I M R P state</div></div><div class="tog on" id="tgl-fi" onclick="tog(this,'fi')"><div class="tok"></div></div></div>
         <div class="trow"><div><div class="trow-l">Captions</div><div class="trow-s">Show detected text</div></div><div class="tog on" id="tgl-cc" onclick="tog(this,'cc')"><div class="tok"></div></div></div>
         <div class="trow"><div><div class="trow-l">Auto-speak</div><div class="trow-s">TTS on each sign</div></div><div class="tog" id="tgl-tts" onclick="tog(this,'tts')"><div class="tok"></div></div></div>
-        <div class="slabel" style="margin-top:6px">Hold duration</div>
+
+        <div class="slabel" style="margin-top:6px">Hold duration to confirm sign</div>
         <div style="display:flex;align-items:center;gap:10px;background:var(--s1);border:1px solid var(--bd);border-radius:var(--rsm);padding:9px 11px">
-          <input type="range" min="300" max="2000" value="900" step="100" id="holdSlider" style="flex:1" oninput="holdMs=+this.value;document.getElementById('holdVal').textContent=this.value+'ms'">
+          <input type="range" min="300" max="2000" value="900" step="100" id="holdSlider" style="flex:1"
+            oninput="holdMs=+this.value;document.getElementById('holdVal').textContent=this.value+'ms'">
           <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--ac);min-width:44px" id="holdVal">900ms</span>
         </div>
       </div>
     </div>
+
     <div class="chat-input-area">
       <input type="text" class="chat-inp" id="chatInput" placeholder="Type a message…">
       <button class="send-btn" onclick="sendChat()">➤</button>
@@ -436,7 +428,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
   </div>
 </div>
 
-<!-- CONTROLS -->
+<!-- CONTROLS BAR -->
 <div class="ctrlbar">
   <div class="ctrl-grp">
     <div class="cbtn on" id="btnMic" onclick="toggleMic(this)"><div class="cbtn-icon">🎙</div><div class="cbtn-lbl">Mic</div></div>
@@ -453,47 +445,47 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
 
 <div class="toast" id="toast"><span id="toastMsg"></span></div>
 
+<!-- PeerJS — real cross-device P2P signaling -->
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <!-- MediaPipe -->
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/hands.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1640029074/camera_utils.js" crossorigin="anonymous"></script>
 
 <script>
 // ══════════════════════════════════════════════
-//  ISL SIGN DATABASE — finger patterns + sentences
-//  fingers: [Thumb, Index, Middle, Ring, Pinky]
+//  ISL SIGN DATABASE
 // ══════════════════════════════════════════════
 const ISL = {
-  HELLO:     { e:'👋', f:[1,1,1,1,1], w:'Hello',          s:'Hello! Nice to meet you.' },
-  BYE:       { e:'🤚', f:[1,1,1,1,1], w:'Bye',            s:'Goodbye! See you soon.' },
-  YES:       { e:'👍', f:[1,0,0,0,0], w:'Yes',            s:'Yes, I agree.' },
-  NO:        { e:'👎', f:[1,0,0,0,0], w:'No',             s:'No, I disagree.' },
-  GOOD:      { e:'✌',  f:[0,1,1,0,0], w:'Good',           s:'That is very good!' },
-  SORRY:     { e:'✊', f:[0,0,0,0,0], w:'Sorry',          s:'I am sorry about that.' },
-  PLEASE:    { e:'🤲', f:[1,1,1,1,1], w:'Please',         s:'Please, could you help me?' },
-  THANKYOU:  { e:'🙏', f:[1,1,1,1,1], w:'Thank you',      s:'Thank you very much.' },
-  HELP:      { e:'🤝', f:[1,0,0,0,0], w:'Help',           s:'I need help please.' },
-  LOVE:      { e:'🤟', f:[1,1,0,0,1], w:'Love',           s:'I love you.' },
-  I:         { e:'🤙', f:[1,0,0,0,1], w:'I',              s:'I am signing to you.' },
-  WATER:     { e:'💧', f:[0,1,1,1,0], w:'Water',          s:'I need some water.' },
-  FOOD:      { e:'🍽', f:[1,1,1,1,0], w:'Food',           s:'I am hungry, I need food.' },
-  HOME:      { e:'🏠', f:[1,1,1,1,0], w:'Home',           s:'I am at home.' },
-  STOP:      { e:'✋', f:[1,1,1,1,1], w:'Stop',           s:'Please stop.' },
-  COME:      { e:'👆', f:[0,1,0,0,0], w:'Come',           s:'Please come here.' },
-  QUESTION:  { e:'❓', f:[0,1,0,0,0], w:'Question',       s:'I have a question.' },
-  MORE:      { e:'➕', f:[1,1,1,1,0], w:'More',           s:'I need more time.' },
-  FINISH:    { e:'🏁', f:[1,1,1,1,1], w:'Finished',       s:'I have finished.' },
-  PAIN:      { e:'😣', f:[0,1,0,0,0], w:'Pain',           s:'I am in pain, please help.' },
-  HAPPY:     { e:'😊', f:[1,1,1,1,1], w:'Happy',          s:'I am very happy right now!' },
-  UNDERSTAND:{ e:'☝', f:[0,1,0,0,0], w:'Understand',     s:'I understand now.' },
-  REPEAT:    { e:'🔁', f:[0,1,1,1,1], w:'Repeat',         s:'Please repeat that again.' },
-  NAME:      { e:'🪪', f:[0,1,1,0,0], w:'Name',           s:'What is your name?' },
-  MEETING:   { e:'🤝', f:[0,1,1,0,0], w:'Meeting',        s:'Let us start the meeting.' },
-  DOCTOR:    { e:'🏥', f:[0,1,0,0,0], w:'Doctor',         s:'I need to see a doctor.' },
-  SCHOOL:    { e:'📚', f:[0,1,1,1,1], w:'School',         s:'I am going to school.' },
-  FRIEND:    { e:'🤞', f:[0,1,1,0,0], w:'Friend',         s:'Nice to meet you, friend.' },
+  HELLO:     { e:'👋', f:[1,1,1,1,1], w:'Hello',       s:'Hello! Nice to meet you.' },
+  BYE:       { e:'🤚', f:[1,1,1,1,1], w:'Bye',         s:'Goodbye! See you soon.' },
+  YES:       { e:'👍', f:[1,0,0,0,0], w:'Yes',         s:'Yes, I agree.' },
+  NO:        { e:'👎', f:[1,0,0,0,0], w:'No',          s:'No, I disagree.' },
+  GOOD:      { e:'✌',  f:[0,1,1,0,0], w:'Good',        s:'That is very good!' },
+  SORRY:     { e:'✊', f:[0,0,0,0,0], w:'Sorry',       s:'I am sorry about that.' },
+  PLEASE:    { e:'🤲', f:[1,1,1,1,1], w:'Please',      s:'Please, could you help me?' },
+  THANKYOU:  { e:'🙏', f:[1,1,1,1,1], w:'Thank you',   s:'Thank you very much.' },
+  HELP:      { e:'🤝', f:[1,0,0,0,0], w:'Help',        s:'I need help please.' },
+  LOVE:      { e:'🤟', f:[1,1,0,0,1], w:'Love',        s:'I love you.' },
+  I:         { e:'🤙', f:[1,0,0,0,1], w:'I',           s:'I am signing to you.' },
+  WATER:     { e:'💧', f:[0,1,1,1,0], w:'Water',       s:'I need some water.' },
+  FOOD:      { e:'🍽', f:[1,1,1,1,0], w:'Food',        s:'I am hungry, I need food.' },
+  HOME:      { e:'🏠', f:[1,1,1,1,0], w:'Home',        s:'I am at home.' },
+  STOP:      { e:'✋', f:[1,1,1,1,1], w:'Stop',        s:'Please stop.' },
+  COME:      { e:'👆', f:[0,1,0,0,0], w:'Come',        s:'Please come here.' },
+  QUESTION:  { e:'❓', f:[0,1,0,0,0], w:'Question',    s:'I have a question.' },
+  MORE:      { e:'➕', f:[1,1,1,1,0], w:'More',        s:'I need more time.' },
+  FINISH:    { e:'🏁', f:[1,1,1,1,1], w:'Finished',    s:'I have finished.' },
+  PAIN:      { e:'😣', f:[0,1,0,0,0], w:'Pain',        s:'I am in pain, please help.' },
+  HAPPY:     { e:'😊', f:[1,1,1,1,1], w:'Happy',       s:'I am very happy right now!' },
+  UNDERSTAND:{ e:'☝', f:[0,1,0,0,0], w:'Understand',  s:'I understand now.' },
+  REPEAT:    { e:'🔁', f:[0,1,1,1,1], w:'Repeat',      s:'Please repeat that again.' },
+  NAME:      { e:'🪪', f:[0,1,1,0,0], w:'Name',        s:'What is your name?' },
+  MEETING:   { e:'🤝', f:[0,1,1,0,0], w:'Meeting',     s:'Let us start the meeting.' },
+  DOCTOR:    { e:'🏥', f:[0,1,0,0,0], w:'Doctor',      s:'I need to see a doctor.' },
+  SCHOOL:    { e:'📚', f:[0,1,1,1,1], w:'School',      s:'I am going to school.' },
+  FRIEND:    { e:'🤞', f:[0,1,1,0,0], w:'Friend',      s:'Nice to meet you, friend.' },
 };
 
-// Map finger patterns → candidate sign keys
 const PATTERNS = [
   { p:[1,1,1,1,1], keys:['HELLO','BYE','STOP','PLEASE','THANKYOU','HAPPY','FINISH'] },
   { p:[1,0,0,0,0], keys:['YES','HELP','NO'] },
@@ -505,29 +497,23 @@ const PATTERNS = [
   { p:[0,1,1,1,1], keys:['REPEAT','SCHOOL'] },
   { p:[0,0,0,0,0], keys:['SORRY'] },
   { p:[0,1,0,0,0], keys:['COME','QUESTION','PAIN','UNDERSTAND','DOCTOR'] },
-  { p:[1,1,1,0,0], keys:['K'] },
 ];
 
 // ══════════════════════════════════════════════
 //  STATE
 // ══════════════════════════════════════════════
-let localStream=null, peerConn=null, dataChannel=null, bc=null;
+let localStream=null;
+let peer=null, activePeerConn=null, activeMediaConn=null;
 let roomId='', elapsed=0, timerIv=null;
 let signsCount=0, wordsCount=0;
 let islActive=true, showKp=true, showFI=true, ccActive=true, ttsActive=false;
 let peerConnected=false;
-const myId='usr_'+Math.random().toString(36).slice(2,8);
-
-// OTP
 let currentOTP='', otpTime=30, otpIv=null;
 const OTP_CIRC=43.98;
-
-// Detection state
 let handsModel=null, mpCam=null;
 let holdStart=null, lastMatch=null, detCooldown=false;
 let holdMs=900;
-let captionWords=[];
-let captionSigns=[];
+let captionWords=[], captionSigns=[];
 
 // ══════════════════════════════════════════════
 //  OTP
@@ -549,9 +535,8 @@ function runOTPTimer(){
 }
 function updateOTPTimer(){
   const pct=otpTime/30;
-  const arc=document.getElementById('otpArc');
-  arc.style.strokeDashoffset=OTP_CIRC*(1-pct);
-  arc.style.stroke=otpTime<=10?'#dc2626':'#2563eb';
+  document.getElementById('otpArc').style.strokeDashoffset=OTP_CIRC*(1-pct);
+  document.getElementById('otpArc').style.stroke=otpTime<=10?'#dc2626':'#2563eb';
   const el=document.getElementById('otpExp');
   el.textContent=otpTime+'s';
   el.className='otp-exp'+(otpTime<=10?' low':'');
@@ -566,8 +551,139 @@ function copyOTP(){
 }
 function verifyOTP(){
   const v=document.getElementById('otpVerifyInput').value.trim();
-  if(v===currentOTP){ toast('✅ OTP verified! Peer authenticated.'); setPeerStatus(true); document.getElementById('otpVerifyInput').value=''; }
+  if(v===currentOTP){ toast('✅ OTP verified! Peer authenticated.'); document.getElementById('otpVerifyInput').value=''; }
   else toast('❌ Wrong OTP — ask peer to share their current code.');
+}
+
+// ══════════════════════════════════════════════
+//  PEERJS — cross-device P2P
+// ══════════════════════════════════════════════
+function initPeer(){
+  // Generate a short readable room ID
+  const chars='abcdefghjkmnpqrstuvwxyz23456789';
+  let id='sb-';
+  for(let i=0;i<6;i++) id+=chars[Math.floor(Math.random()*chars.length)];
+  roomId=id;
+
+  peer=new Peer(roomId,{
+    host:'0.peerjs.com', port:443, path:'/', secure:true,
+    config:{ iceServers:[
+      {urls:'stun:stun.l.google.com:19302'},
+      {urls:'stun:stun1.l.google.com:19302'},
+      {urls:'stun:stun2.l.google.com:19302'},
+    ]}
+  });
+
+  peer.on('open', id=>{
+    roomId=id;
+    document.getElementById('roomChip').textContent='Room: '+id;
+    document.getElementById('roomInput').value=id;
+    document.getElementById('peerDot').className='ws-dot ok';
+    document.getElementById('peerStatus').textContent='Ready — share Room ID above';
+    toast('✅ Connected! Your Room ID: '+id);
+  });
+
+  peer.on('error', err=>{
+    if(err.type==='unavailable-id'){
+      // retry with new id
+      peer.destroy();
+      initPeer();
+    } else {
+      document.getElementById('peerDot').className='ws-dot no';
+      document.getElementById('peerStatus').textContent='Server error — retrying…';
+      setTimeout(initPeer, 3000);
+    }
+  });
+
+  // Receiving a call (someone called our room ID)
+  peer.on('call', call=>{
+    activeMediaConn=call;
+    call.answer(localStream || new MediaStream());
+    call.on('stream', stream=>attachRemote(stream));
+    call.on('close', ()=>{ setPeerStatus(false); toast('Peer disconnected'); });
+    call.on('error', e=>toast('Call error: '+e.message));
+    toast('📞 Incoming call — connecting…');
+  });
+
+  // Receiving a data connection
+  peer.on('connection', conn=>{
+    setupDataConn(conn);
+    toast('💬 Peer data channel connected');
+  });
+}
+
+function setupDataConn(conn){
+  activePeerConn=conn;
+  conn.on('open',()=>{
+    setPeerStatus(true);
+    toast('🔗 Peer connected via PeerJS!');
+  });
+  conn.on('data', d=>{
+    try{ handleMsg(typeof d==='string'?JSON.parse(d):d); }catch(_){}
+  });
+  conn.on('close',()=>{ setPeerStatus(false); toast('⚠ Peer disconnected'); });
+  conn.on('error', e=>toast('Data error: '+e));
+}
+
+async function joinRoom(){
+  const input=document.getElementById('joinInput').value.trim().toLowerCase().replace(/\s+/g,'');
+  if(!input){ toast('Paste your peer\'s Room ID first'); return; }
+  if(input===roomId){ toast('That is your own Room ID!'); return; }
+  if(!peer||!peer.open){ toast('Still connecting to server — wait a moment and try again'); return; }
+
+  document.getElementById('waitingTxt').textContent='Calling '+input+'…';
+  toast('📞 Calling peer: '+input);
+
+  // 1. Open data channel to peer
+  const dc=peer.connect(input,{reliable:true,serialization:'json'});
+  setupDataConn(dc);
+
+  // 2. Send video/audio call to peer
+  const mc=peer.call(input, localStream||new MediaStream());
+  activeMediaConn=mc;
+  mc.on('stream', stream=>attachRemote(stream));
+  mc.on('close',()=>{ setPeerStatus(false); toast('⚠ Media call closed'); });
+  mc.on('error', e=>toast('Call error: '+e.message));
+}
+
+function attachRemote(stream){
+  const rv=document.getElementById('remoteVideo');
+  rv.srcObject=stream; rv.style.display='block';
+  document.getElementById('remoteWaiting').style.display='none';
+  document.getElementById('remoteName').textContent='Peer';
+  document.getElementById('remoteBadge').textContent='ISL';
+  document.getElementById('remoteBadge').className='badge badge-asl';
+  setPeerStatus(true);
+  drawSignalStrength('remoteSignal',4);
+  toast('🎉 Peer video connected!');
+}
+
+function handleMsg(msg){
+  if(msg.type==='sign'){
+    const sign=ISL[msg.key]||{e:msg.emoji||'🤟',w:msg.label||msg.key,s:msg.sentence||msg.key};
+    pushSignCard(msg.key,sign,Math.round(msg.conf),false);
+    signsCount++; wordsCount+=sign.s.split(' ').length;
+    document.getElementById('stSigns').textContent=signsCount;
+    document.getElementById('stWords').textContent=wordsCount;
+    if(ccActive) renderPeerCaption(msg.key,sign,Math.round(msg.conf));
+  } else if(msg.type==='chat'){
+    appendChat({...msg,mine:false});
+  } else if(msg.type==='speaking'){
+    document.getElementById('tile-remote').classList.toggle('speaking',msg.val);
+  }
+}
+
+function sendData(obj){
+  if(activePeerConn&&activePeerConn.open) activePeerConn.send(obj);
+}
+
+function copyRoom(){
+  navigator.clipboard.writeText(roomId).catch(()=>{});
+  toast('Room ID copied: '+roomId);
+}
+function copyFullLink(){
+  navigator.clipboard.writeText(location.href.split('?')[0]+'?r='+roomId).catch(()=>{});
+  toast('Full link copied — share with peer!');
 }
 
 // ══════════════════════════════════════════════
@@ -579,63 +695,49 @@ function initHands(){
   handsModel.onResults(onHandResults);
 }
 
-// Finger geometry — real landmark math
 function getFingerStates(lm){
   const tips=[4,8,12,16,20], pips=[3,6,10,14,18];
-  const states=[];
-  states.push(Math.abs(lm[4].x-lm[2].x)>0.05?1:0); // thumb
-  for(let i=1;i<5;i++) states.push(lm[tips[i]].y<lm[pips[i]].y?1:0);
-  return states;
+  const st=[Math.abs(lm[4].x-lm[2].x)>0.05?1:0];
+  for(let i=1;i<5;i++) st.push(lm[tips[i]].y<lm[pips[i]].y?1:0);
+  return st;
 }
 
 function matchISL(states){
   let best=null, bestScore=-1;
   for(const rule of PATTERNS){
-    let score=0;
-    for(let i=0;i<5;i++) if(rule.p[i]===states[i]) score++;
-    if(score>bestScore){ bestScore=score; best=rule; }
+    let sc=0;
+    for(let i=0;i<5;i++) if(rule.p[i]===states[i]) sc++;
+    if(sc>bestScore){ bestScore=sc; best=rule; }
   }
   const conf=Math.round((bestScore/5)*100);
   if(conf<65) return null;
   return { key:best.keys[0], conf };
 }
 
-// Hand connections for skeleton
 const HCONN=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[0,9],[9,10],[10,11],[11,12],[0,13],[13,14],[14,15],[15,16],[0,17],[17,18],[18,19],[19,20],[5,9],[9,13],[13,17]];
 
 function onHandResults(results){
   const canvas=document.getElementById('localCanvas');
   const tile=document.getElementById('tile-local');
-  canvas.width=tile.offsetWidth||640;
-  canvas.height=tile.offsetHeight||480;
+  canvas.width=tile.offsetWidth||640; canvas.height=tile.offsetHeight||480;
   const ctx=canvas.getContext('2d');
   ctx.clearRect(0,0,canvas.width,canvas.height);
   const W=canvas.width, H=canvas.height;
 
   if(results.multiHandLandmarks&&results.multiHandLandmarks.length>0){
     const lm=results.multiHandLandmarks[0];
-    const side=results.multiHandedness?.[0]?.label||'Right';
-
-    // Draw skeleton
     if(showKp){
       ctx.strokeStyle='rgba(37,99,235,0.5)'; ctx.lineWidth=1.8;
       HCONN.forEach(([a,b])=>{ ctx.beginPath(); ctx.moveTo(lm[a].x*W,lm[a].y*H); ctx.lineTo(lm[b].x*W,lm[b].y*H); ctx.stroke(); });
       const tips=new Set([4,8,12,16,20]);
       lm.forEach((p,i)=>{ ctx.beginPath(); ctx.arc(p.x*W,p.y*H,tips.has(i)?5:2.8,0,Math.PI*2); ctx.fillStyle=tips.has(i)?'#2563eb':'rgba(37,99,235,.7)'; ctx.fill(); });
     }
-
-    // Finger states
     const fs=getFingerStates(lm);
-
-    // Update finger indicators
     if(showFI){
       ['T','I','M','R','P'].forEach((l,i)=>{ const el=document.getElementById('fp'+i); el.textContent=l; el.className='fp '+(fs[i]?'up':'dn'); });
       document.getElementById('fingerRow').className='finger-row visible';
-    } else {
-      document.getElementById('fingerRow').className='finger-row';
-    }
+    } else { document.getElementById('fingerRow').className='finger-row'; }
 
-    // ISL matching
     if(!detCooldown&&islActive){
       const match=matchISL(fs);
       if(match){
@@ -644,42 +746,31 @@ function onHandResults(results){
         document.getElementById('soEmoji').textContent=sign?.e||'🤟';
         document.getElementById('soName').textContent=match.key;
         document.getElementById('soConf').textContent=match.conf+'%';
-
-        // Hold ring
         if(match.key===lastMatch){
           if(!holdStart) holdStart=Date.now();
           const held=Date.now()-holdStart;
           const prog=Math.min(held/holdMs,1);
-          const arc=document.getElementById('holdArc');
-          const circumference=125.66;
-          arc.style.strokeDashoffset=circumference*(1-prog);
+          document.getElementById('holdArc').style.strokeDashoffset=125.66*(1-prog);
           document.getElementById('holdRingWrap').className='hold-ring-wrap visible';
-
-          // Draw progress ring on canvas at wrist
           const wx=lm[0].x*W, wy=lm[0].y*H;
-          const r=22;
-          ctx.beginPath(); ctx.arc(wx,wy,r,0,Math.PI*2);
-          ctx.strokeStyle='rgba(37,99,235,.15)'; ctx.lineWidth=4; ctx.stroke();
-          ctx.beginPath(); ctx.arc(wx,wy,r,-Math.PI/2,-Math.PI/2+Math.PI*2*prog);
-          ctx.strokeStyle='#2563eb'; ctx.lineWidth=4; ctx.lineCap='round'; ctx.stroke(); ctx.lineCap='butt';
-
-          if(held>=holdMs){
-            confirmSign(match.key,match.conf);
-            holdStart=null; lastMatch=null;
-            document.getElementById('holdRingWrap').className='hold-ring-wrap';
-          }
-        } else {
-          lastMatch=match.key; holdStart=Date.now();
-        }
+          ctx.beginPath(); ctx.arc(wx,wy,22,0,Math.PI*2); ctx.strokeStyle='rgba(37,99,235,.15)'; ctx.lineWidth=4; ctx.stroke();
+          ctx.beginPath(); ctx.arc(wx,wy,22,-Math.PI/2,-Math.PI/2+Math.PI*2*prog); ctx.strokeStyle='#2563eb'; ctx.lineWidth=4; ctx.lineCap='round'; ctx.stroke(); ctx.lineCap='butt';
+          if(held>=holdMs){ confirmSign(match.key,match.conf); holdStart=null; lastMatch=null; document.getElementById('holdRingWrap').className='hold-ring-wrap'; }
+        } else { lastMatch=match.key; holdStart=Date.now(); }
       } else {
-        document.getElementById('signOverlay').className='sign-overlay';
+        document.getElementById('signOverlay').className='sign-overlay visible';
+        document.getElementById('soEmoji').textContent='🤟';
+        document.getElementById('soName').textContent='Show a sign…';
+        document.getElementById('soConf').textContent='';
         document.getElementById('holdRingWrap').className='hold-ring-wrap';
         lastMatch=null; holdStart=null;
       }
     }
   } else {
-    // No hand
-    document.getElementById('signOverlay').className='sign-overlay';
+    document.getElementById('signOverlay').className='sign-overlay visible';
+    document.getElementById('soEmoji').textContent='🤟';
+    document.getElementById('soName').textContent='No hand detected';
+    document.getElementById('soConf').textContent='';
     document.getElementById('fingerRow').className='finger-row';
     document.getElementById('holdRingWrap').className='hold-ring-wrap';
     lastMatch=null; holdStart=null;
@@ -689,89 +780,53 @@ function onHandResults(results){
 // ══════════════════════════════════════════════
 //  CONFIRM SIGN → CAPTION
 // ══════════════════════════════════════════════
-function confirmSign(key, conf){
+function confirmSign(key,conf){
   detCooldown=true;
-  setTimeout(()=>detCooldown=false, 900);
-
-  const sign=ISL[key];
-  if(!sign) return;
-
-  signsCount++;
-  wordsCount+=sign.s.split(' ').length;
+  setTimeout(()=>detCooldown=false,900);
+  const sign=ISL[key]; if(!sign) return;
+  signsCount++; wordsCount+=sign.s.split(' ').length;
   document.getElementById('stSigns').textContent=signsCount;
   document.getElementById('stConf').textContent=conf+'%';
   document.getElementById('stWords').textContent=wordsCount;
-
-  captionWords.push(sign.w);
-  captionSigns.push({ key, sign, conf });
-
-  renderCaption(key, sign, conf, 'You');
-  pushSignCard(key, sign, conf, true);
-  sendData({ type:'sign', key, conf, sentence:sign.s, emoji:sign.e, label:sign.w });
-  toast(sign.e+' '+key+' detected → "'+sign.s+'"');
-
+  captionWords.push(sign.w); captionSigns.push({key,sign,conf});
+  renderCaption(key,sign,conf,'You');
+  pushSignCard(key,sign,conf,true);
+  sendData({type:'sign',key,conf,sentence:sign.s,emoji:sign.e,label:sign.w});
+  toast(sign.e+' '+key+' → "'+sign.s+'"');
   if(ttsActive){ const u=new SpeechSynthesisUtterance(sign.w); u.lang='en-IN'; u.rate=0.95; speechSynthesis.cancel(); speechSynthesis.speak(u); }
 }
 
-// ══════════════════════════════════════════════
-//  CAPTION RENDERING
-// ══════════════════════════════════════════════
-function renderCaption(key, sign, conf, who){
+function renderCaption(key,sign,conf,who){
   if(!ccActive) return;
   document.getElementById('capWho').textContent=who;
-  document.getElementById('capTag').textContent='ISL → Text';
   document.getElementById('capOk').style.display='';
-  document.getElementById('capEmpty').style.display='none';
-
   const el=document.getElementById('capText');
-  // Add new word as animated span
-  const sp=document.createElement('span');
-  sp.className='cw newest';
-  sp.textContent=sign.w+' ';
-  sp.title=sign.s;
-  el.appendChild(sp);
+  const empty=document.getElementById('capEmpty');
+  if(empty) empty.style.display='none';
+  const sp=document.createElement('span'); sp.className='cw newest'; sp.textContent=sign.w+' '; sp.title=sign.s; el.appendChild(sp);
   setTimeout(()=>sp.classList.remove('newest'),600);
-
-  // Show cursor
-  let cur=el.querySelector('.cap-cursor');
-  if(cur) cur.remove();
+  let cur=el.querySelector('.cap-cursor'); if(cur) cur.remove();
   cur=document.createElement('span'); cur.className='cap-cursor'; el.appendChild(cur);
-
-  // Sign badges
-  const badgeRow=document.getElementById('capSignBadge');
-  const tag=document.createElement('span');
-  tag.className='sign-word-tag';
-  tag.textContent=sign.e+' '+sign.w;
-  tag.title=sign.s+' ('+conf+'%)';
-  badgeRow.appendChild(tag);
-  if(badgeRow.children.length>8) badgeRow.removeChild(badgeRow.firstChild);
+  const badges=document.getElementById('capSignBadge');
+  const tag=document.createElement('span'); tag.className='sign-word-tag'; tag.textContent=sign.e+' '+sign.w; tag.title=sign.s+' ('+conf+'%)'; badges.appendChild(tag);
+  if(badges.children.length>8) badges.removeChild(badges.firstChild);
 }
 
-function renderPeerCaption(key, sign, conf){
+function renderPeerCaption(key,sign,conf){
   if(!ccActive) return;
   document.getElementById('capWho').textContent='Peer';
-  document.getElementById('capTag').textContent='ISL → Text';
   document.getElementById('capOk').style.display='';
-  document.getElementById('capEmpty').style.display='none';
-
   const el=document.getElementById('capText');
-  const sp=document.createElement('span');
-  sp.className='cw newest';
-  sp.style.color='var(--ac2)';
-  sp.textContent=sign.w+' ';
-  sp.title=sign.s;
-  el.appendChild(sp);
+  const empty=document.getElementById('capEmpty'); if(empty) empty.style.display='none';
+  const sp=document.createElement('span'); sp.className='cw newest'; sp.style.color='var(--ac2)'; sp.textContent=sign.w+' '; sp.title=sign.s; el.appendChild(sp);
   setTimeout(()=>{ sp.classList.remove('newest'); sp.style.color=''; },600);
-
-  let cur=el.querySelector('.cap-cursor');
-  if(cur) cur.remove();
+  let cur=el.querySelector('.cap-cursor'); if(cur) cur.remove();
   cur=document.createElement('span'); cur.className='cap-cursor'; el.appendChild(cur);
 }
 
 function clearCaption(){
   captionWords=[]; captionSigns=[];
-  const el=document.getElementById('capText');
-  el.innerHTML='<span class="cap-empty" id="capEmpty">Caption cleared — sign to start…</span>';
+  document.getElementById('capText').innerHTML='<span class="cap-empty" id="capEmpty">Caption cleared — sign to start…</span>';
   document.getElementById('capSignBadge').innerHTML='';
   document.getElementById('capOk').style.display='none';
   document.getElementById('capWho').textContent='—';
@@ -780,27 +835,16 @@ function clearCaption(){
 function undoLast(){
   if(!captionWords.length) return;
   captionWords.pop(); captionSigns.pop();
-  // Rebuild
-  const el=document.getElementById('capText');
-  el.innerHTML='';
-  if(!captionWords.length){
-    el.innerHTML='<span class="cap-empty" id="capEmpty">Undone — sign to continue…</span>';
-    document.getElementById('capSignBadge').innerHTML='';
-    return;
-  }
-  captionSigns.forEach(({sign},i)=>{
-    const sp=document.createElement('span'); sp.className='cw'; sp.textContent=sign.w+' '; el.appendChild(sp);
-  });
-  const cur=document.createElement('span'); cur.className='cap-cursor'; el.appendChild(cur);
-  const badges=document.getElementById('capSignBadge');
-  badges.innerHTML='';
-  captionSigns.forEach(({sign})=>{ const t=document.createElement('span'); t.className='sign-word-tag'; t.textContent=sign.e+' '+sign.w; badges.appendChild(t); });
-  toast('Undo: removed last sign');
+  const el=document.getElementById('capText'); el.innerHTML='';
+  if(!captionWords.length){ el.innerHTML='<span class="cap-empty" id="capEmpty">Undone…</span>'; document.getElementById('capSignBadge').innerHTML=''; return; }
+  captionSigns.forEach(({sign})=>{ const sp=document.createElement('span'); sp.className='cw'; sp.textContent=sign.w+' '; el.appendChild(sp); });
+  el.appendChild(Object.assign(document.createElement('span'),{className:'cap-cursor'}));
+  const b=document.getElementById('capSignBadge'); b.innerHTML='';
+  captionSigns.forEach(({sign})=>{ const t=document.createElement('span'); t.className='sign-word-tag'; t.textContent=sign.e+' '+sign.w; b.appendChild(t); });
 }
 
 function speakCaption(){
-  const text=captionWords.join(' ');
-  if(!text){ toast('Nothing to speak yet'); return; }
+  const text=captionWords.join(' '); if(!text){ toast('Nothing to speak yet'); return; }
   const u=new SpeechSynthesisUtterance(text); u.lang='en-IN'; u.rate=0.9;
   speechSynthesis.cancel(); speechSynthesis.speak(u);
   toast('🔊 Speaking: "'+text+'"');
@@ -809,19 +853,11 @@ function speakCaption(){
 // ══════════════════════════════════════════════
 //  SIGN CARD FEED
 // ══════════════════════════════════════════════
-function pushSignCard(key, sign, conf, isLocal){
+function pushSignCard(key,sign,conf,isLocal){
   const feed=document.getElementById('signFeed');
-  const empty=document.getElementById('signEmpty');
-  if(empty) empty.remove();
-  const card=document.createElement('div');
-  card.className='sign-card lit';
-  card.innerHTML=`
-    <div class="sc-top">
-      <span class="sc-name">${sign.e} ${key} <span style="font-size:9px;color:var(--t3)">${isLocal?'(you)':'(peer)'}</span></span>
-      <span class="sc-conf">${conf}%</span>
-    </div>
-    <div class="sc-bar"><div class="sc-fill" style="width:${conf}%"></div></div>
-    <div class="sc-desc">${sign.s.slice(0,50)}</div>`;
+  const empty=document.getElementById('signEmpty'); if(empty) empty.remove();
+  const card=document.createElement('div'); card.className='sign-card lit';
+  card.innerHTML=`<div class="sc-top"><span class="sc-name">${sign.e} ${key} <span style="font-size:9px;color:var(--t3)">${isLocal?'(you)':'(peer)'}</span></span><span class="sc-conf">${conf}%</span></div><div class="sc-bar"><div class="sc-fill" style="width:${conf}%"></div></div><div class="sc-desc">${sign.s.slice(0,50)}</div>`;
   feed.prepend(card);
   while(feed.children.length>8) feed.removeChild(feed.lastChild);
   setTimeout(()=>card.classList.remove('lit'),1200);
@@ -836,8 +872,7 @@ async function startCamera(){
       video:{width:{ideal:1280},height:{ideal:720},facingMode:'user'},
       audio:{echoCancellation:true,noiseSuppression:true}
     });
-    const lv=document.getElementById('localVideo');
-    lv.srcObject=localStream;
+    const lv=document.getElementById('localVideo'); lv.srcObject=localStream;
     document.getElementById('localAvatar').style.display='none';
     document.getElementById('localBadge').textContent='ISL Active';
     document.getElementById('localBadge').className='badge badge-asl';
@@ -847,14 +882,12 @@ async function startCamera(){
     drawSignalStrength('localSignal',4);
     startSpeaking();
     document.getElementById('signOverlay').className='sign-overlay visible';
-    document.getElementById('soName').textContent='Show your hand…';
-    document.getElementById('soConf').textContent='';
-    toast('📷 Camera + ISL detection active — show a sign!');
+    toast('📷 Camera ready — show an ISL sign!');
     return true;
   } catch(err){
     document.getElementById('localBadge').textContent='No Camera';
     document.getElementById('localBadge').className='badge badge-mute';
-    toast('⚠ Camera denied: '+err.message);
+    toast('⚠ Camera: '+err.message);
     return false;
   }
 }
@@ -864,112 +897,8 @@ function startSpeaking(){
     const ac=new AudioContext(), src=ac.createMediaStreamSource(localStream), an=ac.createAnalyser();
     an.fftSize=512; src.connect(an);
     const buf=new Uint8Array(an.frequencyBinCount);
-    setInterval(()=>{ an.getByteFrequencyData(buf); const avg=buf.reduce((a,b)=>a+b,0)/buf.length; document.getElementById('tile-local').classList.toggle('speaking',avg>12); },200);
+    setInterval(()=>{ an.getByteFrequencyData(buf); const avg=buf.reduce((a,b)=>a+b,0)/buf.length; document.getElementById('tile-local').classList.toggle('speaking',avg>12); sendData({type:'speaking',val:avg>12}); },250);
   } catch(_){}
-}
-
-// ══════════════════════════════════════════════
-//  WEBRTC
-// ══════════════════════════════════════════════
-function generateRoom(){ const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let r=''; for(let i=0;i<8;i++) r+=c[Math.floor(Math.random()*c.length)]; return r.slice(0,4)+'-'+r.slice(4); }
-function setRoom(id){ roomId=id; document.getElementById('roomChip').textContent='Room: '+id; document.getElementById('roomInput').value=id; }
-function copyRoom(){ navigator.clipboard.writeText(roomId).catch(()=>{}); toast('Room ID copied: '+roomId); }
-function copyLink(){ navigator.clipboard.writeText(location.href.split('?')[0]+'?room='+roomId).catch(()=>{}); toast('Room link copied!'); }
-
-const ICE=[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}];
-
-function createPeerConnection(){
-  peerConn=new RTCPeerConnection({iceServers:ICE});
-  if(localStream) localStream.getTracks().forEach(t=>peerConn.addTrack(t,localStream));
-  peerConn.ontrack=(e)=>{
-    const rv=document.getElementById('remoteVideo');
-    rv.srcObject=e.streams[0]; rv.style.display='block';
-    document.getElementById('remoteWaiting').style.display='none';
-    document.getElementById('remoteName').textContent='Peer';
-    document.getElementById('remoteBadge').textContent='ISL';
-    document.getElementById('remoteBadge').className='badge badge-asl';
-    setPeerStatus(true);
-    drawSignalStrength('remoteSignal',3+Math.floor(Math.random()*2));
-    toast('🎉 Peer connected — video active!');
-  };
-  dataChannel=peerConn.createDataChannel('sb',{ordered:true});
-  setupDC(dataChannel);
-  peerConn.ondatachannel=(e)=>setupDC(e.channel);
-  peerConn.onicecandidate=(e)=>{ if(e.candidate&&bc) bc.postMessage({type:'ice',from:myId,candidate:e.candidate}); };
-  peerConn.oniceconnectionstatechange=()=>{
-    const s=peerConn.iceConnectionState;
-    if(s==='connected'||s==='completed'){setPeerStatus(true);toast('🔗 P2P link established');}
-    if(s==='disconnected'||s==='failed'){setPeerStatus(false);toast('⚠ Peer disconnected');}
-  };
-  return peerConn;
-}
-
-function setupDC(ch){
-  ch.onopen=()=>{ dataChannel=ch; setPeerStatus(true); toast('💬 Data channel open'); };
-  ch.onmessage=(e)=>{ try{ handleMsg(JSON.parse(e.data)); }catch(_){} };
-}
-
-function handleMsg(msg){
-  if(msg.type==='sign'){
-    const sign=ISL[msg.key]||{e:msg.emoji||'🤟',w:msg.label||msg.key,s:msg.sentence||msg.key,f:[]};
-    pushSignCard(msg.key, sign, Math.round(msg.conf), false);
-    signsCount++; wordsCount+=sign.s.split(' ').length;
-    document.getElementById('stSigns').textContent=signsCount;
-    document.getElementById('stWords').textContent=wordsCount;
-    renderPeerCaption(msg.key, sign, Math.round(msg.conf));
-  } else if(msg.type==='chat'){
-    appendChat({...msg,mine:false});
-  } else if(msg.type==='speaking'){
-    document.getElementById('tile-remote').classList.toggle('speaking',msg.val);
-  }
-}
-
-function sendData(obj){ if(dataChannel&&dataChannel.readyState==='open') dataChannel.send(JSON.stringify(obj)); }
-
-function setupOwnBroadcast(){
-  bc=new BroadcastChannel('signbridge_'+roomId);
-  bc.onmessage=async(e)=>{
-    const msg=e.data; if(msg.from===myId)return;
-    if(!peerConn)createPeerConnection();
-    if(msg.type==='offer'){ await peerConn.setRemoteDescription(new RTCSessionDescription(msg.sdp)); const ans=await peerConn.createAnswer(); await peerConn.setLocalDescription(ans); bc.postMessage({type:'answer',from:myId,sdp:ans}); }
-    else if(msg.type==='answer'){ try{await peerConn.setRemoteDescription(new RTCSessionDescription(msg.sdp));}catch(_){} }
-    else if(msg.type==='ice'){ try{await peerConn.addIceCandidate(new RTCIceCandidate(msg.candidate));}catch(_){} }
-    else if(msg.type==='hello'){ toast('👋 Peer found — connecting…'); document.getElementById('waitingTxt').textContent='Connecting…'; await initiateOfferBC(); }
-  };
-  bc.postMessage({type:'hello',from:myId});
-  peerConn.onicecandidate=(e)=>{ if(e.candidate)bc.postMessage({type:'ice',from:myId,candidate:e.candidate}); };
-}
-
-function setupBroadcastSignaling(targetRoom){
-  if(bc)bc.close();
-  bc=new BroadcastChannel('signbridge_'+targetRoom);
-  bc.onmessage=async(e)=>{
-    const msg=e.data; if(msg.from===myId)return;
-    if(!peerConn)createPeerConnection();
-    if(msg.type==='offer'){ await peerConn.setRemoteDescription(new RTCSessionDescription(msg.sdp)); const ans=await peerConn.createAnswer(); await peerConn.setLocalDescription(ans); bc.postMessage({type:'answer',from:myId,sdp:ans}); }
-    else if(msg.type==='answer'){ try{await peerConn.setRemoteDescription(new RTCSessionDescription(msg.sdp));}catch(_){} }
-    else if(msg.type==='ice'){ try{await peerConn.addIceCandidate(new RTCIceCandidate(msg.candidate));}catch(_){} }
-    else if(msg.type==='hello'){ toast('👋 Peer found — offering…'); await initiateOfferBC(); }
-  };
-  if(!peerConn)createPeerConnection();
-  peerConn.onicecandidate=(e)=>{ if(e.candidate)bc.postMessage({type:'ice',from:myId,candidate:e.candidate}); };
-  bc.postMessage({type:'hello',from:myId});
-  setRoom(targetRoom);
-  toast('Joined room '+targetRoom+' — waiting for peer…');
-}
-
-async function initiateOfferBC(){
-  if(!peerConn)createPeerConnection();
-  const offer=await peerConn.createOffer({offerToReceiveAudio:true,offerToReceiveVideo:true});
-  await peerConn.setLocalDescription(offer);
-  bc.postMessage({type:'offer',from:myId,sdp:offer});
-}
-
-async function joinRoom(){
-  const input=document.getElementById('joinInput').value.trim().toUpperCase();
-  if(!input){ toast('Enter a Room ID first'); return; }
-  if(input===roomId){ toast('That is your own Room ID'); return; }
-  setupBroadcastSignaling(input);
 }
 
 // ══════════════════════════════════════════════
@@ -985,17 +914,14 @@ function drawSignalStrength(id,bars){
 // ══════════════════════════════════════════════
 function appendChat(msg){
   const c=document.getElementById('chatMsgs');
-  const now=new Date();
-  const ts=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-  const mine=!!msg.mine;
-  const div=document.createElement('div'); div.className='chat-msg'+(mine?' me':'');
-  const col=mine?'var(--ac)':'#7c3aed';
-  const init=mine?'YO':'PR';
+  const now=new Date(), ts=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  const mine=!!msg.mine, div=document.createElement('div'); div.className='chat-msg'+(mine?' me':'');
+  const col=mine?'var(--ac)':'#7c3aed', init=mine?'YO':'PR';
   div.innerHTML=`<div class="chat-av" style="background:${col}22;color:${col}">${init}</div><div><div class="chat-bub${mine?' me':''}">${msg.text}</div><div class="chat-ts">${mine?'You':'Peer'} · ${ts}</div></div>`;
   c.appendChild(div); c.scrollTop=c.scrollHeight;
 }
 function sendChat(){
-  const inp=document.getElementById('chatInput'); const text=inp.value.trim(); if(!text)return;
+  const inp=document.getElementById('chatInput'), text=inp.value.trim(); if(!text)return;
   inp.value=''; appendChat({text,mine:true}); sendData({type:'chat',text});
   wordsCount+=text.split(' ').length; document.getElementById('stWords').textContent=wordsCount;
 }
@@ -1008,50 +934,48 @@ function toggleCam(btn){ btn.classList.toggle('on'); const on=btn.classList.cont
 function toggleISL(btn){ btn.classList.toggle('on'); islActive=btn.classList.contains('on'); document.getElementById('slInd').style.opacity=islActive?'1':'0.4'; document.getElementById('slTxt').textContent=islActive?'ISL Detection Active':'ISL Paused'; toast(islActive?'🤟 ISL on':'⏸ ISL paused'); }
 function toggleCtrl(btn,type){ btn.classList.toggle('on'); const on=btn.classList.contains('on'); if(type==='cc'){ccActive=on;toast(on?'📝 Captions on':'📝 Captions off');} if(type==='rec'){toast(on?'⏺ Recording started':'⏹ Recording stopped');} }
 function tog(el,key){ el.classList.toggle('on'); const on=el.classList.contains('on'); if(key==='kp')showKp=on; if(key==='fi')showFI=on; if(key==='cc')ccActive=on; if(key==='tts')ttsActive=on; }
-function setPeerStatus(c){ peerConnected=c; document.getElementById('peerDot').className='ws-dot '+(c?'ok':'wait'); document.getElementById('peerStatus').textContent=c?'Peer connected':'Waiting for peer…'; }
+function setPeerStatus(c){ peerConnected=c; document.getElementById('peerDot').className='ws-dot '+(c?'ok':'wait'); document.getElementById('peerStatus').textContent=c?'✅ Peer connected!':'Waiting for peer…'; }
 function switchTab(name){ document.querySelectorAll('.stab').forEach((b,i)=>b.classList.toggle('on',['signs','chat','settings'][i]===name)); document.querySelectorAll('.tab-pane').forEach(p=>p.classList.toggle('on',p.id==='tab-'+name)); }
 function startTimer(){ if(timerIv)return; timerIv=setInterval(()=>{ elapsed++; document.getElementById('timerEl').textContent=String(Math.floor(elapsed/60)).padStart(2,'0')+':'+String(elapsed%60).padStart(2,'0'); },1000); }
 function toggleFS(){ if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{}); else document.exitFullscreen(); }
-
 function endCall(){
   clearInterval(timerIv); clearInterval(otpIv);
-  if(mpCam){try{mpCam.stop();}catch(_){} mpCam=null;}
-  if(peerConn)peerConn.close();
-  if(localStream)localStream.getTracks().forEach(t=>t.stop());
-  if(bc)bc.close();
+  if(mpCam){try{mpCam.stop();}catch(_){}}
+  if(activePeerConn) activePeerConn.close();
+  if(activeMediaConn) activeMediaConn.close();
+  if(peer) peer.destroy();
+  if(localStream) localStream.getTracks().forEach(t=>t.stop());
   toast('👋 Call ended');
   const m=Math.floor(elapsed/60),s=elapsed%60;
-  setTimeout(()=>alert(`Call ended.\n\nSession summary\n${'─'.repeat(26)}\nDuration: ${m}m ${s}s\nSigns detected: ${signsCount}\nWords: ${wordsCount}\nPipeline: MediaPipe Hands → ISL Match → Caption`),600);
+  setTimeout(()=>alert('Call ended.\n\nSession summary\n'+('─'.repeat(26))+'\nDuration: '+m+'m '+s+'s\nSigns detected: '+signsCount+'\nWords: '+wordsCount+'\nPipeline: MediaPipe → ISL → Captions'),600);
 }
 
 let toastTimer;
-function toast(msg){ clearTimeout(toastTimer); document.getElementById('toastMsg').textContent=msg; const el=document.getElementById('toast'); el.classList.add('show'); toastTimer=setTimeout(()=>el.classList.remove('show'),3200); }
+function toast(msg){ clearTimeout(toastTimer); document.getElementById('toastMsg').textContent=msg; const el=document.getElementById('toast'); el.classList.add('show'); toastTimer=setTimeout(()=>el.classList.remove('show'),3500); }
 
 // ══════════════════════════════════════════════
 //  INIT
 // ══════════════════════════════════════════════
 document.getElementById('chatInput').addEventListener('keydown',e=>{ if(e.key==='Enter')sendChat(); });
+document.getElementById('joinInput').addEventListener('keydown',e=>{ if(e.key==='Enter')joinRoom(); });
 document.getElementById('otpVerifyInput').addEventListener('keydown',e=>{ if(e.key==='Enter')verifyOTP(); });
 
-setRoom(generateRoom());
 generateOTP();
 
 document.getElementById('btnCam').onclick=async()=>{
   document.getElementById('overlay').style.display='none';
   await startCamera();
-  createPeerConnection();
-  setupOwnBroadcast();
+  initPeer();
   startTimer();
 };
 
 document.getElementById('btnNoCam').onclick=()=>{
   document.getElementById('overlay').style.display='none';
-  document.getElementById('localBadge').textContent='Audio only';
+  document.getElementById('localBadge').textContent='No camera';
   document.getElementById('localBadge').className='badge badge-mute';
-  createPeerConnection();
-  setupOwnBroadcast();
+  initPeer();
   startTimer();
-  toast('Joined without camera — share Room ID to invite');
+  toast('Joined without camera — share your Room ID to invite');
 };
 </script>
 </body>
