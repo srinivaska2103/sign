@@ -960,7 +960,7 @@ function endCall(){
   if(localStream) localStream.getTracks().forEach(t=>t.stop());
   toast('👋 Call ended');
   const m=Math.floor(elapsed/60),s=elapsed%60;
-  setTimeout(()=>alert('Call ended.\n\nSession summary\n'+('─'.repeat(26))+'\nDuration: '+m+'m '+s+'s\nSigns detected: '+signsCount+'\nWords: '+wordsCount+'\nPipeline: MediaPipe → ISL → Captions'),600);
+  setTimeout(()=>alert('Call ended.\n\nSession summary\n'+('─'.repeat(26))+'\nDuration: '+m+'m '+s+'s\nSigns detected: '+signsCount),600);
 }
 
 let toastTimer;
