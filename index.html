@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SignBridge — ISL Live Detection</title>
+<title>SignBridge</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -200,20 +200,17 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
 </style>
 </head>
 <body>
+  
+
+ 
 
 <!-- OVERLAY -->
 <div class="overlay" id="overlay">
+  
   <div class="consent-box">
     <div class="cb-logo">🤟</div>
     <div class="cb-title">SignBridge</div>
-    <div class="cb-sub">Show ISL signs to your camera — detects hand gestures in real-time and generates live captions. Share your Room ID with anyone to connect across any device.</div>
-    <div class="tech-wrap">
-      <span class="tech-pill">MediaPipe Hands</span>
-      <span class="tech-pill">ISL Detection</span>
-      <span class="tech-pill">Live Captions</span>
-      <span class="tech-pill">OTP Security</span>
-      <span class="tech-pill">PeerJS WebRTC</span>
-    </div>
+    
     <div class="cb-acts">
       <button class="btn-g" id="btnNoCam">Join without camera</button>
       <button class="btn-p" id="btnCam">Enable camera &amp; detect</button>
@@ -241,7 +238,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
 </div>
 
 <!-- OTP STRIP -->
-<div class="otp-strip">
+<div class="otp-strip" style="display: none !important;">
   <span class="otp-label">Room OTP</span>
   <div class="otp-digits">
     <div class="otp-d" id="od0">–</div><div class="otp-d" id="od1">–</div>
@@ -323,54 +320,70 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
 
     <!-- CAPTION BOX -->
     <div class="caption-box">
-      <div class="cap-header">
-        <div class="cap-left">
+      <div class="cap-header" >
+        <div class="cap-left" style="display: none">
           <span class="cap-who" id="capWho">—</span>
           <span class="cap-tag" id="capTag">ISL → Text</span>
           <span class="cap-ok" id="capOk" style="display:none">✓ Detected</span>
         </div>
         <div class="cap-right">
-          <button class="cap-action" onclick="speakCaption()">🔊 Speak</button>
-          <button class="cap-action" onclick="undoLast()">⌫ Undo</button>
+          <!-- <button class="cap-action" onclick="speakCaption()">🔊 Speak</button> -->
+          <!-- <button class="cap-action" onclick="undoLast()">⌫ Undo</button> -->
           <button class="cap-action red" onclick="clearCaption()">Clear</button>
         </div>
       </div>
       <div class="cap-body">
         <div class="cap-text" id="capText">
-          <span class="cap-empty" id="capEmpty">Show an ISL sign to the camera — captions appear here automatically…</span>
+          <!-- <span class="cap-empty" id="capEmpty">Show an ISL sign to the camera — captions appear here automatically…</span> -->
         </div>
-        <div class="cap-sign-badge" id="capSignBadge"></div>
+        <div class="cap-sign-badge" id="capSignBadge" style="display: none"></div>
       </div>
     </div>
   </div>
 
   <!-- SIDEBAR -->
   <div class="sidebar">
-    <div class="stat-row">
+    <div class="stat-row" style="display: none; visibility: hidden; opacity: 0; pointer-events: none;">
+  <div class="stat-box" >
+    <div class="stat-n" id="stSigns">0</div>
+    <div class="stat-l">Signs</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-n" id="stConf">—</div>
+    <div class="stat-l">Conf</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-n" id="stWords">0</div>
+    <div class="stat-l">Words</div>
+  </div>
+</div>
+    <!-- <div class="stat-row">
       <div class="stat-box"><div class="stat-n" id="stSigns">0</div><div class="stat-l">Signs</div></div>
       <div class="stat-box"><div class="stat-n" id="stConf">—</div><div class="stat-l">Conf</div></div>
       <div class="stat-box"><div class="stat-n" id="stWords">0</div><div class="stat-l">Words</div></div>
-    </div>
+    </div> -->
     <div class="stabs">
-      <button class="stab on" onclick="switchTab('signs')">Signs</button>
-      <button class="stab" onclick="switchTab('chat')">Chat</button>
+      <!-- <button class="stab on" onclick="switchTab('signs')">Signs</button> -->
+      <!-- <button class="stab" onclick="switchTab('chat')">Chat</button> -->
       <button class="stab" onclick="switchTab('settings')">Settings</button>
     </div>
     <div class="spanel">
 
       <!-- SIGNS TAB -->
-      <div class="tab-pane on" id="tab-signs">
-        <div class="slabel">Detected signs</div>
-        <div id="signFeed" style="display:flex;flex-direction:column;gap:5px">
-          <div id="signEmpty" style="font-size:12px;color:var(--t3);text-align:center;padding:14px 0">No signs detected yet</div>
-        </div>
-      </div>
+     <div class="tab-pane on" id="tab-signs" style="display: none !important;">
+  <div class="slabel">Detected signs</div>
+  <div id="signFeed" style="display: flex; flex-direction: column; gap: 5px;">
+    <div id="signEmpty" style="font-size: 12px; color: var(--t3); text-align: center; padding: 14px 0;">
+      No signs detected yet
+    </div>
+  </div>
+</div>
 
       <!-- CHAT TAB -->
-      <div class="tab-pane" id="tab-chat">
+      <!-- <div class="tab-pane" id="tab-chat">
         <div class="slabel">Meeting chat</div>
         <div id="chatMsgs" style="display:flex;flex-direction:column;gap:7px"></div>
-      </div>
+      </div> -->
 
       <!-- SETTINGS TAB -->
       <div class="tab-pane" id="tab-settings">
@@ -397,8 +410,8 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
           </div>
         </div>
 
-        <div class="slabel" style="margin-top:6px">OTP verification</div>
-        <div class="room-share">
+        <!-- <div class="slabel" style="margin-top:6px">OTP verification</div> -->
+        <div class="room-share" style="display: none">
           <label>Enter peer's 6-digit OTP to verify</label>
           <input type="text" class="room-inp" id="otpVerifyInput" placeholder="e.g. 482931" maxlength="6">
           <div class="btn-row">
@@ -406,14 +419,14 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
           </div>
         </div>
 
-        <div class="slabel" style="margin-top:6px">ISL detection</div>
-        <div class="trow"><div><div class="trow-l">Show skeleton</div><div class="trow-s">Hand landmark overlay</div></div><div class="tog on" id="tgl-kp" onclick="tog(this,'kp')"><div class="tok"></div></div></div>
-        <div class="trow"><div><div class="trow-l">Finger indicators</div><div class="trow-s">T I M R P state</div></div><div class="tog on" id="tgl-fi" onclick="tog(this,'fi')"><div class="tok"></div></div></div>
-        <div class="trow"><div><div class="trow-l">Captions</div><div class="trow-s">Show detected text</div></div><div class="tog on" id="tgl-cc" onclick="tog(this,'cc')"><div class="tok"></div></div></div>
-        <div class="trow"><div><div class="trow-l">Auto-speak</div><div class="trow-s">TTS on each sign</div></div><div class="tog" id="tgl-tts" onclick="tog(this,'tts')"><div class="tok"></div></div></div>
+        <!-- <div class="slabel" style="margin-top:6px">ISL detection</div> -->
+        <div class="trow" style="display: none"><div><div class="trow-l">Show skeleton</div><div class="trow-s">Hand landmark overlay</div></div><div class="tog on" id="tgl-kp" onclick="tog(this,'kp')"><div class="tok"></div></div></div>
+        <div class="trow" style="display: none"><div><div class="trow-l">Finger indicators</div><div class="trow-s">T I M R P state</div></div><div class="tog on" id="tgl-fi" onclick="tog(this,'fi')"><div class="tok"></div></div></div>
+        <div class="trow" style="display: none"><div><div class="trow-l">Captions</div><div class="trow-s">Show detected text</div></div><div class="tog on" id="tgl-cc" onclick="tog(this,'cc')"><div class="tok"></div></div></div>
+        <div class="trow" style="display: none"><div><div class="trow-l">Auto-speak</div><div class="trow-s">TTS on each sign</div></div><div class="tog" id="tgl-tts" onclick="tog(this,'tts')"><div class="tok"></div></div></div>
 
-        <div class="slabel" style="margin-top:6px">Hold duration to confirm sign</div>
-        <div style="display:flex;align-items:center;gap:10px;background:var(--s1);border:1px solid var(--bd);border-radius:var(--rsm);padding:9px 11px">
+        <!-- <div class="slabel" style="margin-top:6px">Hold duration to confirm sign</div> -->
+        <div style="display:none;align-items:center;gap:10px;background:var(--s1);border:1px solid var(--bd);border-radius:var(--rsm);padding:9px 11px">
           <input type="range" min="300" max="2000" value="900" step="100" id="holdSlider" style="flex:1"
             oninput="holdMs=+this.value;document.getElementById('holdVal').textContent=this.value+'ms'">
           <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--ac);min-width:44px" id="holdVal">900ms</span>
@@ -421,24 +434,24 @@ body{font-family:'DM Sans',sans-serif;color:var(--t);display:flex;flex-direction
       </div>
     </div>
 
-    <div class="chat-input-area">
-      <input type="text" class="chat-inp" id="chatInput" placeholder="Type a message…">
-      <button class="send-btn" onclick="sendChat()">➤</button>
-    </div>
+   <div class="chat-input-area" style="display: none !important;">
+  <input type="text" class="chat-inp" id="chatInput" placeholder="Type a message…">
+  <button class="send-btn" onclick="sendChat()">➤</button>
+</div>
   </div>
 </div>
 
 <!-- CONTROLS BAR -->
 <div class="ctrlbar">
-  <div class="ctrl-grp">
+  <div class="ctrl-grp" style="display: none"> 
     <div class="cbtn on" id="btnMic" onclick="toggleMic(this)"><div class="cbtn-icon">🎙</div><div class="cbtn-lbl">Mic</div></div>
     <div class="cbtn on" id="btnCamCtrl" onclick="toggleCam(this)"><div class="cbtn-icon">📷</div><div class="cbtn-lbl">Camera</div></div>
     <div class="cbtn on" id="btnISL" onclick="toggleISL(this)"><div class="cbtn-icon">🤟</div><div class="cbtn-lbl">ISL</div></div>
   </div>
   <div class="sl-ind" id="slInd"><div class="sl-pulse"></div><span id="slTxt">ISL Detection Active</span></div>
   <div class="ctrl-grp">
-    <div class="cbtn" onclick="toggleCtrl(this,'cc')"><div class="cbtn-icon">📝</div><div class="cbtn-lbl">Captions</div></div>
-    <div class="cbtn" onclick="toggleCtrl(this,'rec')"><div class="cbtn-icon">⏺</div><div class="cbtn-lbl">Record</div></div>
+    <!-- <div class="cbtn" onclick="toggleCtrl(this,'cc')"><div class="cbtn-icon">📝</div><div class="cbtn-lbl">Captions</div></div> -->
+    <!-- <div class="cbtn" onclick="toggleCtrl(this,'rec')"><div class="cbtn-icon">⏺</div><div class="cbtn-lbl">Record</div></div> -->
     <button class="end-btn" onclick="endCall()">End Call</button>
   </div>
 </div>
@@ -465,7 +478,7 @@ const ISL = {
   PLEASE:    { e:'🤲', f:[1,1,1,1,1], w:'Please',      s:'Please, could you help me?' },
   THANKYOU:  { e:'🙏', f:[1,1,1,1,1], w:'Thank you',   s:'Thank you very much.' },
   HELP:      { e:'🤝', f:[1,0,0,0,0], w:'Help',        s:'I need help please.' },
-  LOVE:      { e:'🤟', f:[1,1,0,0,1], w:'Love',        s:'I love you.' },
+  FRIEND:      { e:'🤟', f:[1,1,0,0,1], w:'Friend',    s:'I love you.' },
   I:         { e:'🤙', f:[1,0,0,0,1], w:'I',           s:'I am signing to you.' },
   WATER:     { e:'💧', f:[0,1,1,1,0], w:'Water',       s:'I need some water.' },
   FOOD:      { e:'🍽', f:[1,1,1,1,0], w:'Food',        s:'I am hungry, I need food.' },
@@ -483,13 +496,13 @@ const ISL = {
   MEETING:   { e:'🤝', f:[0,1,1,0,0], w:'Meeting',     s:'Let us start the meeting.' },
   DOCTOR:    { e:'🏥', f:[0,1,0,0,0], w:'Doctor',      s:'I need to see a doctor.' },
   SCHOOL:    { e:'📚', f:[0,1,1,1,1], w:'School',      s:'I am going to school.' },
-  FRIEND:    { e:'🤞', f:[0,1,1,0,0], w:'Friend',      s:'Nice to meet you, friend.' },
+  LOVE:    { e:'🤞', f:[0,1,1,0,0], w:'Love',      s:'Nice to meet you, friend.' },
 };
 
 const PATTERNS = [
   { p:[1,1,1,1,1], keys:['HELLO','BYE','STOP','PLEASE','THANKYOU','HAPPY','FINISH'] },
   { p:[1,0,0,0,0], keys:['YES','HELP','NO'] },
-  { p:[1,1,0,0,1], keys:['LOVE'] },
+  { p:[1,1,0,0,1], keys:['FRIEND'] },
   { p:[1,0,0,0,1], keys:['I'] },
   { p:[0,1,1,0,0], keys:['GOOD','NAME','MEETING','FRIEND'] },
   { p:[0,1,1,1,0], keys:['WATER'] },
